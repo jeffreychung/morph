@@ -37,6 +37,8 @@ module Morph
         # Let parent know about ip address of running container
         wrapper.call(:ip_address, c.json["NetworkSettings"]["IPAddress"])
         c.attach(logs: true) do |s,c|
+          puts "Local root path :#{local_root_path}"
+          puts "Calling /bin/bash -l -c #{options[:command]} in directory /data..."
           wrapper.call(:log, s, c)
         end
         status_code = c.json["State"]["ExitCode"]
