@@ -38,11 +38,13 @@ class Metric < ActiveRecord::Base
     # There's a bug in GNU time 1.7 which wrongly reports the maximum resident set size on the version of Ubuntu that we're using
     # See https://groups.google.com/forum/#!topic/gnu.utils.help/u1MOsHL4bhg
     # Let's fix it up
-    raise "Page size not known" unless params[:page_size]
-    params[:maxrss] = params[:maxrss] * 1024 / params[:page_size]
+    unless params.empty?
+      raise "Page size not known" unless params[:page_size]
+      params[:maxrss] = params[:maxrss] * 1024 / params[:page_size]
 
-    # page_size isn't an attribute on this model
-    params.delete(:page_size)
+      # page_size isn't an attribute on this model
+      params.delete(:page_size)
+    end
     Metric.create(params)
   end
 
