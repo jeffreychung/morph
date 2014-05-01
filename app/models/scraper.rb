@@ -125,7 +125,11 @@ class Scraper < ActiveRecord::Base
   end
 
   def can_write?(user)
-    Scraper.can_write?(user, owner)
+    if Morph::Github.use_github?
+      Scraper.can_write?(user, owner)
+    else
+      true
+    end
   end
 
   def destroy_repo_and_data
@@ -288,7 +292,7 @@ class Scraper < ActiveRecord::Base
   def synchronise_repo
     Morph::Github.synchronise_repo(repo_path, git_url)
     update_repo_size
-    update_contributors
+    update_contributors if Morph::Github.use_github?
   end
 
   # Return the https version of the git clone url (git_url)
@@ -356,7 +360,7 @@ class Scraper < ActiveRecord::Base
   private
 
   def not_used_on_github
-    errors.add(:name, "is already taken on GitHub") if Morph::Github.in_public_use?(full_name)
+    errors.add(:name, "is already taken on GitHub") if Morph::Github.use_github? && Morph::Github.in_public_use?(full_name)
   end
 
   def exists_on_scraperwiki

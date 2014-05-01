@@ -1,6 +1,21 @@
 require 'spec_helper'
 
 describe Scraper do
+  context 'use_github? is false' do
+    before do
+      Morph::Github.stub(:use_github?).and_return(false)
+    end
+    it 'should ' do
+      git_url = "asd"
+      name = "tofu"
+      owner = Owner.new(name: "Seb")
+      scraper = Scraper.new(name: name, full_name: name,
+        description: "", github_id: "", owner: owner,
+        github_url: "", git_url: git_url)
+      scraper.should be_valid
+    end
+  end
+
   context "A scraper with a couple of runs" do
     before :each do
       user = User.create
@@ -37,7 +52,7 @@ describe Scraper do
     describe "#scraperwiki_url" do
       it do
         @scraper.scraperwiki_shortname = "australian_rainfall"
-        @scraper.scraperwiki_url.should == "https://classic.scraperwiki.com/scrapers/australian_rainfall/" 
+        @scraper.scraperwiki_url.should == "https://classic.scraperwiki.com/scrapers/australian_rainfall/"
       end
 
       it do

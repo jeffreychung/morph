@@ -1,5 +1,9 @@
 module Morph
   class Github
+    def self.use_github?
+      return false
+    end
+
     def self.synchronise_repo(repo_path, git_url)
       # Set git timeout to 1 minute
       # TODO Move this to a configuration
