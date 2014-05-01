@@ -31,4 +31,29 @@ namespace :app do
   task :synchronise_repos => :environment do
     Scraper.all.each{|s| s.synchronise_repo}
   end
+
+  desc "Add a scraper from a git location"
+  task :add_scraper => :environment do
+    puts "Which git URI do you want to clone?"
+    puts "(e.g. file:///home/seb/Code/external_bots)"
+    #git_uri = $stdin.gets.chomp
+    git_uri = "file:///home/seb/Code/simple_bot_ng"
+    match = git_uri.match(/.*\/(.*)(\.git)?$/)
+    if match
+      name = match[1]
+      # nickname is required as it's the friendlyid
+      owner = User.new(name: "Seb", nickname: "seb")
+      owner.save!
+      scraper = Scraper.new(name: name, full_name: "seb/#{name}",
+        description: "", github_id: "", owner: owner,
+        github_url: "", git_url: git_uri)
+      scraper.save!
+      scraper.synchronise_repo
+    else
+      puts "Not a valid git URI"
+    end
+  end
+
+
+
 end
