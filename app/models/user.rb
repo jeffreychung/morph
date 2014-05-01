@@ -1,6 +1,6 @@
 class User < Owner
   # TODO Add :omniauthable
-  devise :trackable, :omniauthable, :omniauth_providers => [:github]
+  devise :trackable, :omniauthable, :omniauth_providers => [:developer, :github]
   has_and_belongs_to_many :organizations, join_table: :organizations_users
   has_many :alerts
   has_many :contributions
