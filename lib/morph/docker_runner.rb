@@ -26,8 +26,8 @@ module Morph
       end
 
       # TODO the local path will be different if docker isn't running through Vagrant (i.e. locally)
-      # HACK on OS X we're expecting to use Vagrant
-      local_root_path = RUBY_PLATFORM.downcase.include?('darwin') ? "/vagrant" : Rails.root
+      # When using vagrant we use a hard coded end point so it has the correct permissions
+      local_root_path = defined?(DOCKER_URL) ? "/vagrant" : Rails.root
 
       begin
         c.start("Binds" => [
