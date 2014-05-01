@@ -27,8 +27,7 @@ module Morph
 
       # TODO the local path will be different if docker isn't running through Vagrant (i.e. locally)
       # When using vagrant we use a hard coded end point so it has the correct permissions
-      local_root_path = defined?(DOCKER_URL) ? "/vagrant" : Rails.root
-
+      local_root_path = ENV['DOCKER_URL'] ? "/vagrant" : Rails.root
       begin
         c.start("Binds" => [
           "#{local_root_path}/#{options[:repo_path]}:/repo:ro",
