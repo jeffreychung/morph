@@ -147,7 +147,7 @@ class Scraper < ActiveRecord::Base
 
   def self.update_docker_image!
     docker_command = "docker #{ENV['DOCKER_TCP'] ? "-H #{ENV['DOCKER_TCP']}" : ""}"
-    system("#{docker_command} pull openaustralia/morph-ruby")
+    system("#{docker_command} pull opencorporates/morph-ruby")
     system("#{docker_command} pull openaustralia/morph-php")
     system("#{docker_command} pull openaustralia/morph-python")
     system("#{docker_command} pull openaustralia/morph-perl")
