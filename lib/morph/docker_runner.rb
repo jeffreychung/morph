@@ -7,10 +7,11 @@ module Morph
       # Open up a special interactive connection to Docker
       # TODO Cache connection
       conn_interactive = Docker::Connection.new(ENV["DOCKER_URL"] || Docker.default_socket_url, {chunk_size: 1, read_timeout: 4.hours})
-
+      local_root_path = ENV['DOCKER_URL'] ? "/vagrant" : Rails.root
+      command = options[:command]
       # This will fail if there is another container with the same name
       begin
-        c = Docker::Container.create({"Cmd" => ['/bin/bash', '-l', '-c', options[:command]],
+        docker_args = {"Cmd" => ['/bin/bash', '-l', '-c', command],
           "User" => "scraper",
           "Image" => options[:image_name],
           "name" => options[:container_name],
@@ -18,7 +19,9 @@ module Morph
           "CpuShares" => 307,
           # Memory limit (in bytes)
           # On a 1G machine we're allowing a max of 10 containers to run at a time. So, 100M
-          "Memory" => 100 * 1024 * 1024}, conn_interactive)
+          "Memory" => 100 * 1024 * 1024}
+        puts "Creating container #{docker_args}"
+        c = Docker::Container.create(docker_args, conn_interactive)
       rescue Excon::Errors::SocketError => e
         wrapper.call(:log, :internal, "Morph internal error: Could not connect to Docker server: #{e}\n")
         wrapper.call(:log, :internal, "Requeueing...\n")
@@ -27,7 +30,6 @@ module Morph
 
       # TODO the local path will be different if docker isn't running through Vagrant (i.e. locally)
       # When using vagrant we use a hard coded end point so it has the correct permissions
-      local_root_path = ENV['DOCKER_URL'] ? "/vagrant" : Rails.root
       begin
         c.start("Binds" => [
           "#{local_root_path}/#{options[:repo_path]}:/repo:ro",
