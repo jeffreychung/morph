@@ -39,10 +39,10 @@ module Morph
         puts "Running docker container..."
         # Let parent know about ip address of running container
         wrapper.call(:ip_address, c.json["NetworkSettings"]["IPAddress"])
-        c.attach(logs: true) do |s,c|
-          puts "Local root path :#{local_root_path}"
-          puts "Calling /bin/bash -l -c #{options[:command]} in directory /data..."
-          wrapper.call(:log, s, c)
+        puts "Local root path :#{local_root_path}"
+        puts "Calling /bin/bash -l -c #{options[:command]} in directory /data..."
+        c.attach(logs: true) do |stream,chunk|
+          wrapper.call(:log, stream, chunk)
         end
         status_code = c.json["State"]["ExitCode"]
         puts "Docker container finished..."
