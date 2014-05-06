@@ -136,8 +136,12 @@ class Run < ActiveRecord::Base
     end
 
     # Now collect and save the metrics
-    metric = Metric.read_from_file(time_output_path)
-    metric.update_attributes(run_id: self.id)
+    begin
+      metric = Metric.read_from_file(time_output_path)
+      metric.update_attributes(run_id: self.id)
+    rescue Errno::ENOENT
+      # No metrics got generated; let the run complete anyway
+    end
 
     update_attributes(status_code: status_code, finished_at: Time.now)
     # Update information about what changed in the database
