@@ -120,7 +120,8 @@ class Run < ActiveRecord::Base
       return
     end
 
-    command = Metric.command(Morph::Language.scraper_command(language), Run.time_output_filename)
+    wrapper_cmd = "#{Morph::Language.binary_name(language)} /utils/angler-wrapper.rb #{name} #{id}"
+    command = Metric.command("#{wrapper_cmd} #{Morph::Language.scraper_command(language)} #{name}", Run.time_output_filename)
     status_code = Morph::DockerRunner.run(
       command: command,
       image_name: docker_image,

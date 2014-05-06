@@ -33,7 +33,8 @@ module Morph
       begin
         c.start("Binds" => [
           "#{local_root_path}/#{options[:repo_path]}:/repo:ro",
-          "#{local_root_path}/#{options[:data_path]}:/data"
+          "#{local_root_path}/#{options[:data_path]}:/data",
+          "#{local_root_path}/utils:/utils:ro"
         ])
         puts "Running docker container..."
         # Let parent know about ip address of running container
