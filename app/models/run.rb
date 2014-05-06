@@ -95,7 +95,7 @@ class Run < ActiveRecord::Base
   end
 
   def docker_image
-    "openaustralia/morph-#{language}"
+    "opencorporates/morph-#{language}"
   end
 
   def git_revision_github_url
