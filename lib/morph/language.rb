@@ -30,7 +30,7 @@ module Morph
       when :ruby
         # Run a special script of ours before anything else which switches off
         # buffering on stdout and stderr
-        "ruby -r/usr/local/lib/prerun.rb"
+        "BUNDLE_GEMFILE=/etc/Gemfile ruby -r/usr/local/lib/prerun.rb"
       when :php
         "php"
       when :python
