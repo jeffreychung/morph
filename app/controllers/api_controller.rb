@@ -2,7 +2,7 @@ class ApiController < ApplicationController
   include ActionController::Live
 
   # The run_remote method will be secured with a key so shouldn't need csrf token authentication
-  skip_before_filter :verify_authenticity_token, :only => [:run_remote]
+  skip_before_filter :verify_authenticity_token, :only => [:run_remote, :create_from_git]
 
   def test
     count = 0
