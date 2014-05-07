@@ -40,7 +40,25 @@ class ApiController < ApplicationController
 
       # Cleanup run
       FileUtils.rm_rf(run.data_path)
-      FileUtils.rm_rf(run.repo_path)      
+      FileUtils.rm_rf(run.repo_path)
     end
+  end
+
+  def create_from_git
+    git_url = params[:git_url]
+    match = git_url.match(/.*\/(.*?)(\.git)?$/)
+    name = match && match[1] || ""
+    owner = User.find_or_create_by(name: "OpenCorporates", nickname: "openc")
+    owner.save!
+    @scraper = Scraper.find_or_create_by(name: name, full_name: "openc/#{name}",
+      description: "", github_id: "", owner: owner,
+      github_url: "", git_url: git_url)
+    if !match
+      @scraper.errors.add(:git_url, "is not parseable")
+      render json: @scraper.errors.to_json
+    elsif @scraper.save
+      @scraper.synchronise_repo
+    end
+    render json: @scraper.to_json
   end
 end
