@@ -48,7 +48,7 @@ def command_output_each_line(command, options={})
   end
 end
 
-def check_output_with_timeout(stdout, initial_interval = 10, timeout = 180)
+def check_output_with_timeout(stdout, initial_interval = 10, timeout = 21600)
   interval = initial_interval
   loop do
     reads, _, _ = IO.select([stdout], [], [], interval)
