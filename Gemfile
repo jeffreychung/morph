@@ -63,8 +63,9 @@ group :production do
 end
 
 group :development do
-  gem 'capistrano-rails'
-  gem 'capistrano-rvm'
+  #gem 'capistrano-rails'
+  gem 'capistrano', '2.13.5'
+  gem 'rvm-capistrano', '1.4.1'
   gem 'guard'
   gem 'guard-livereload', require: false
   gem "rack-livereload"
