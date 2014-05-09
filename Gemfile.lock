@@ -17,6 +17,13 @@ GIT
       sass-rails
 
 GIT
+  remote: git@github.com:metaquark/foreman-export-initscript.git
+  revision: a897eb0220fedda741643364498050659517d9f9
+  specs:
+    foreman-export-initscript (0.0.1)
+      foreman
+
+GIT
   remote: https://github.com/mikowitz/formtastic-bootstrap.git
   revision: 63f2aa97428ce2edca06b7e3de3b3a3f80602a22
   specs:
@@ -431,6 +438,7 @@ DEPENDENCIES
   faraday
   faye
   foreman
+  foreman-export-initscript!
   formtastic (= 2.3.0.rc2)
   formtastic-bootstrap!
   friendly_id

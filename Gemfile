@@ -74,7 +74,7 @@ group :development do
   #gem "bullet"
   gem 'rack-mini-profiler'
   #gem "flamegraph"
-
+  gem 'foreman-export-initscript', :git => 'git@github.com:metaquark/foreman-export-initscript.git'
   gem 'better_errors'
   gem 'binding_of_caller'
 end
@@ -96,7 +96,6 @@ end
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
-
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 
