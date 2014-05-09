@@ -18,6 +18,12 @@ set :use_sudo, false
 
 set :scm, :git
 
+set :normalize_asset_timestamps, false
+
+set :asset_env, "RAILS_GROUPS=assets"
+set :assets_prefix, "assets"
+
+
 ssh_options[:forward_agent] = true
 
 default_run_options[:pty] = true
@@ -90,6 +96,57 @@ namespace :deploy do
     run "cp /oc/openc/secure_config/morph-sync.yml #{shared_path}/config/sync.yml"
     run "cp /oc/openc/secure_config/morph-dotenv #{shared_path}/config/morph-dotenv"
   end
+
+
+  namespace :assets do
+    # This block taken from capistrano, but we want to run in slightly different order, otherwise probs with database.yml
+    desc <<-DESC
+      [internal] This task will set up a symlink to the shared directory \
+      for the assets directory. Assets are shared across deploys to avoid \
+      mid-deploy mismatches between old application html asking for assets \
+      and getting a 404 file not found error. The assets cache is shared \
+      for efficiency. If you customize the assets path prefix, override the \
+      :assets_prefix variable to match.
+    DESC
+    task :symlink, :roles => :web, :except => { :no_release => true } do
+      run <<-CMD
+        rm -rf #{latest_release}/public/#{assets_prefix} &&
+        mkdir -p #{latest_release}/public &&
+        mkdir -p #{shared_path}/assets &&
+        ln -s #{shared_path}/assets #{latest_release}/public/#{assets_prefix}
+      CMD
+    end
+
+    desc <<-DESC
+      Run the asset precompilation rake task. You can specify the full path \
+      to the rake executable by setting the rake variable. You can also \
+      specify additional environment variables to pass to rake via the \
+      asset_env variable. The defaults are:
+
+        set :rake,      "rake"
+        set :rails_env, "production"
+        set :asset_env, "RAILS_GROUPS=assets"
+    DESC
+    task :precompile, :roles => :web, :except => { :no_release => true } do
+      run "cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assets:precompile"
+    end
+
+    desc <<-DESC
+      Run the asset clean rake task. Use with caution, this will delete \
+      all of your compiled assets. You can specify the full path \
+      to the rake executable by setting the rake variable. You can also \
+      specify additional environment variables to pass to rake via the \
+      asset_env variable. The defaults are:
+
+        set :rake,      "rake"
+        set :rails_env, "production"
+        set :asset_env, "RAILS_GROUPS=assets"
+    DESC
+    task :clean, :roles => :web, :except => { :no_release => true } do
+      run "cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assets:clean"
+    end
+  end
+
 end
 
 #before 'deploy:setup', 'deploy:install_apt_dependencies'
@@ -98,3 +155,5 @@ before 'deploy:setup', 'rvm:install_ruby'
 before 'deploy:setup', 'deploy:install_bundler'
 after 'deploy:update_code', 'deploy:create_folder_structure'
 after 'deploy:update_code', 'deploy:update_symlinks'
+after 'deploy:update_code', 'deploy:assets:symlink'
+after "deploy:assets:symlink", "deploy:assets:precompile"
