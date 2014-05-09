@@ -1,5 +1,8 @@
 # Secret configuration
 
+# Email addresses (whitespace separated) to send error reports to
+ERROR_RECIPIENTS=nobody@example.com
+
 # Copy this to .env and fill in the x's - these values are then automatically loaded as environment variables
 # See https://github.com/bkeepers/dotenv for more information
 
