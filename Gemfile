@@ -27,6 +27,7 @@ gem "grit"
 gem 'docker-api', :require => 'docker'
 gem "sidekiq"
 gem "foreman"
+gem 'foreman-export-initscript', :git => 'git@github.com:metaquark/foreman-export-initscript.git'
 gem "faraday"
 #gem 'jquery-turbolinks'
 gem "archive-tar-minitar"
@@ -74,7 +75,6 @@ group :development do
   #gem "bullet"
   gem 'rack-mini-profiler'
   #gem "flamegraph"
-  gem 'foreman-export-initscript', :git => 'git@github.com:metaquark/foreman-export-initscript.git'
   gem 'better_errors'
   gem 'binding_of_caller'
 end
