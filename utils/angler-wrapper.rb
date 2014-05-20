@@ -21,6 +21,7 @@ def send
     line[:bot_name] = bot_name
     line[:run_id] = run_id
     line[:export_date] = Time.now.iso8601()
+    line[:type] = 'bot.record'
     Hutch.publish('bot.record', line)
     count += 1
   end
