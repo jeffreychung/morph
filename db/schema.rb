@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140425063425) do
+ActiveRecord::Schema.define(version: 20140520152348) do
 
   create_table "active_admin_comments", force: true do |t|
     t.string   "namespace"
@@ -166,13 +166,14 @@ ActiveRecord::Schema.define(version: 20140425063425) do
     t.integer  "records_changed"
     t.integer  "records_unchanged"
     t.string   "ip_address"
+    t.text     "run_params"
   end
 
   add_index "runs", ["owner_id"], name: "index_runs_on_owner_id", using: :btree
   add_index "runs", ["scraper_id"], name: "index_runs_on_scraper_id", using: :btree
 
   create_table "scrapers", force: true do |t|
-    t.string   "name",              default: "",    null: false
+    t.string   "name",                              null: false
     t.string   "description"
     t.integer  "github_id"
     t.integer  "owner_id",                          null: false

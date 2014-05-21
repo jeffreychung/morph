@@ -120,8 +120,21 @@ class Run < ActiveRecord::Base
       return
     end
 
-    wrapper_cmd = "#{Morph::Language.binary_name(language)} /utils/angler-wrapper.rb #{name} #{id}"
-    command = Metric.command("#{wrapper_cmd} #{Morph::Language.scraper_command(language)} #{name}", Run.time_output_filename)
+    command = [
+      Morph::Language.binary_name(language),
+      '/utils/angler-wrapper.rb',
+      name,
+      run_params.present? ? 'update' : id,
+      Morph::Language.scraper_command(language),
+      name
+    ]
+
+    if run_params.present?
+      command << Base64.encode64(run_params)
+    end
+
+    command = Metric.command(command.join(' '), Run.time_output_filename)
+
     status_code = Morph::DockerRunner.run(
       command: command,
       image_name: docker_image,

@@ -172,10 +172,15 @@ class Scraper < ActiveRecord::Base
     last_run.nil? || last_run.finished?
   end
 
-  def queue!
+  def queue!(run_params=nil)
     # Guard against more than one of a particular scraper running at the same time
     if runnable?
-      run = runs.create(queued_at: Time.now, auto: false, owner_id: owner_id)
+      run = runs.create(
+        queued_at: Time.now,
+        auto: false,
+        owner_id: owner_id,
+        run_params: run_params.present? ? run_params.to_json : nil
+      )
       RunWorker.perform_async(run.id)
     end
   end

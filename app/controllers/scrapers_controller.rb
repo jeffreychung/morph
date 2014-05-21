@@ -1,5 +1,6 @@
 class ScrapersController < ApplicationController
-  before_filter :authenticate_user!, except: [:index, :show, :data, :watchers]
+  before_filter :authenticate_user!, except: [:index, :show, :data, :watchers, :run_with_params]
+  protect_from_forgery with: :exception, except: [:run_with_params]
 
   def settings
     @scraper = Scraper.friendly.find(params[:id])
@@ -143,6 +144,13 @@ class ScrapersController < ApplicationController
       flash[:alert] = "Can't run someone else's scraper!"
     end
     redirect_to scraper
+  end
+
+  def run_with_params
+    scraper = Scraper.friendly.find(params[:id])
+    run_params = params.except('authenticity_token', 'controller', 'action', 'id', 'scraper')
+    scraper.queue!(run_params)
+    head :ok
   end
 
   # TODO Extract checking of who owns the scraper
