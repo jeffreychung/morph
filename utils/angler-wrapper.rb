@@ -27,7 +27,8 @@ def send
     if line.strip == 'NOT FOUND'
       line = {
         data: JSON.parse(run_params),
-        end_date: Time.now.iso8601
+        end_date: Time.now.iso8601,
+        end_date_type: 'before'
       }
     else
       line = {
