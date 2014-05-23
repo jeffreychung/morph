@@ -130,6 +130,9 @@ class Run < ActiveRecord::Base
     ]
 
     if run_params.present?
+      # run_params are base 64 encoded to ensure that any quotes and spaces in
+      # the JSON are not misinterpreted when passed to Docker.  For some
+      # reason, Shellwords.shellescape doesn't quite work here.
       command << Base64.encode64(run_params)
     end
 
