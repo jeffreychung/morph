@@ -45,15 +45,11 @@ class ApiController < ApplicationController
   end
 
   def run_with_params
-    user = User.find_by_api_key(params[:api_key])
-    if user.nil?
-      head :unauthorized
-    else
-      scraper = Scraper.friendly.find(params[:id])
-      run_params = params.except('api_key', 'controller', 'action', 'id', 'scraper')
-      scraper.queue!(run_params)
-      head :ok
-    end
+    # TODO: authorization
+    scraper = Scraper.friendly.find(params[:id])
+    run_params = params.except('api_key', 'controller', 'action', 'id', 'scraper')
+    scraper.queue!(run_params)
+    head :ok
   end
 
   def create_from_git
