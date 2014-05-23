@@ -120,11 +120,22 @@ class Run < ActiveRecord::Base
       return
     end
 
+    if run_params.present?
+      p = JSON.parse(run_params)
+      if p["run"]
+        run_id = p["run"]
+      else
+        run_id = "update"
+      end
+    else
+      run_id = self.id
+    end
+
     command = [
       Morph::Language.binary_name(language),
       '/utils/angler-wrapper.rb',
       name,
-      run_params.present? ? 'update' : id,
+      run_id,
       Morph::Language.scraper_command(language),
       name
     ]
