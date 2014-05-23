@@ -2,7 +2,7 @@ class ApiController < ApplicationController
   include ActionController::Live
 
   # The run_remote method will be secured with a key so shouldn't need csrf token authentication
-  skip_before_filter :verify_authenticity_token, :only => [:run_remote, :create_from_git]
+  skip_before_filter :verify_authenticity_token, :only => [:run_remote, :run_with_params, :create_from_git]
 
   def test
     count = 0
@@ -41,6 +41,18 @@ class ApiController < ApplicationController
       # Cleanup run
       FileUtils.rm_rf(run.data_path)
       FileUtils.rm_rf(run.repo_path)
+    end
+  end
+
+  def run_with_params
+    user = User.find_by_api_key(params[:api_key])
+    if user.nil?
+      head :unauthorized
+    else
+      scraper = Scraper.friendly.find(params[:id])
+      run_params = params.except('api_key', 'controller', 'action', 'id', 'scraper')
+      scraper.queue!(run_params)
+      head :ok
     end
   end
 

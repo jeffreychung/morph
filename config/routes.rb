@@ -75,6 +75,7 @@ Morph::Application.routes.draw do
   delete "/*id", to: "scrapers#destroy"
   patch "/*id", to: "scrapers#update"
   post "/*id/run", to: "scrapers#run", as: :run_scraper
+  post "/*id/run_with_params", to: "api#run_with_params"
   post "/*id/clear", to: "scrapers#clear", as: :clear_scraper
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

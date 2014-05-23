@@ -1,3 +1,6 @@
+require 'json'
+require 'base64'
+require 'shellwords'
 require 'hutch'
 require 'open3'
 require 'ostruct' # work around bug in hutch
@@ -15,12 +18,28 @@ def send
   bot_name = ARGV.delete_at(0)
   run_id = ARGV.delete_at(0)
   puts "Started bot #{bot_name}, run #{run_id}..."
+  if ARGV.size == 5
+    run_params = Base64.decode64(ARGV[-1])
+    ARGV[-1] = Shellwords.shellescape(run_params)
+  end
   count = 0
   command_output_each_line(ARGV.join(" "), {}) do |line|
-    line = {data: JSON.parse(line)}
+    if line.strip == 'NOT FOUND'
+      line = {
+        data: JSON.parse(run_params),
+        end_date: Time.now.iso8601,
+        end_date_type: 'before'
+      }
+    else
+      line = {
+        data: JSON.parse(line),
+        export_date: Time.now.iso8601
+      }
+    end
+
     line[:bot_name] = bot_name
     line[:run_id] = run_id
-    line[:export_date] = Time.now.iso8601()
+    line[:type] = 'bot.record'
     Hutch.publish('bot.record', line)
     count += 1
   end
