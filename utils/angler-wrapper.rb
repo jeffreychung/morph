@@ -16,10 +16,10 @@ def send
   config.set(:mq_vhost, '/')
   config.set(:log_level, Logger::WARN)
   Hutch.connect({}, config)
+  repo_name = ARGV.delete_at(0)
   run_id = ARGV.delete_at(0)
   config = parsed_manifest
-  bot_name = config["bot_id"]
-  puts "Started bot #{bot_name}, run #{run_id}..."
+  puts "Started bot #{repo_name}, run #{run_id}..."
   if ARGV.size == 5
     run_params = Base64.decode64(ARGV[-1])
     ARGV[-1] = Shellwords.shellescape(run_params)
@@ -41,7 +41,7 @@ def send
       line[:data_type] = config["data_type"]
       line[:identifying_fields] = config["identifying_fields"]
     end
-    line[:bot_name] = bot_name
+    line[:bot_name] = config["bot_id"]
     line[:run_id] = run_id
     line[:type] = 'bot.record'
     Hutch.publish('bot.record', line)

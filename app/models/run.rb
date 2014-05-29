@@ -134,6 +134,7 @@ class Run < ActiveRecord::Base
     command = [
       Morph::Language.binary_name(language),
       '/utils/angler-wrapper.rb',
+      name,
       run_id,
       Morph::Language.scraper_command(language),
       name
