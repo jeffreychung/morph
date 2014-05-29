@@ -19,7 +19,8 @@ module Morph
           "CpuShares" => 307,
           # Memory limit (in bytes)
           # On a 1G machine we're allowing a max of 10 containers to run at a time. So, 100M
-          "Memory" => 100 * 1024 * 1024}
+          "Memory" => 100 * 1024 * 1024,
+          "Env" => ["TURBOT_API_KEY=#{ENV['TURBOT_API_KEY']}"]}
         puts "Creating container #{docker_args}"
         c = Docker::Container.create(docker_args, conn_interactive)
       rescue Excon::Errors::SocketError => e

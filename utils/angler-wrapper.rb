@@ -6,8 +6,10 @@ require 'open3'
 require 'ostruct' # work around bug in hutch
 require 'hutch/logging'
 require 'time'
+require 'turbot_api'
 
 def send
+  api = Turbot::API.new(api_key: ENV['TURBOT_API_KEY'])
   config = Hutch::Config
   config.set(:mq_host, 'rabbit1')
   config.set(:mq_api_host, 'rabbit1')
@@ -23,6 +25,7 @@ def send
     ARGV[-1] = Shellwords.shellescape(run_params)
   end
   count = 0
+  config = api.get_config_vars(bot)
   command_output_each_line(ARGV.join(" "), {}) do |line|
     if line.strip == 'NOT FOUND'
       line = {
@@ -35,8 +38,9 @@ def send
         data: JSON.parse(line),
         export_date: Time.now.iso8601
       }
+      line[:data_type] = config["data_type"]
+      line[:identifying_fields] = config["identifying_fields"]
     end
-
     line[:bot_name] = bot_name
     line[:run_id] = run_id
     line[:type] = 'bot.record'

@@ -1,5 +1,8 @@
 # Secret configuration
 
+# An API key for Turbot that has Admin privileges
+TURBOT_API_KEY=xxxxxxxxxxxxxxxxxxxx
+
 # Email addresses (whitespace separated) to send error reports to
 ERROR_RECIPIENTS=nobody@example.com
 
