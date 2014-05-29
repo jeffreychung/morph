@@ -9,7 +9,6 @@ require 'time'
 require 'turbot_api'
 
 def send
-  api = Turbot::API.new(api_key: ENV['TURBOT_API_KEY'])
   config = Hutch::Config
   config.set(:mq_host, 'rabbit1')
   config.set(:mq_api_host, 'rabbit1')
@@ -17,15 +16,16 @@ def send
   config.set(:mq_vhost, '/')
   config.set(:log_level, Logger::WARN)
   Hutch.connect({}, config)
-  bot_name = ARGV.delete_at(0)
   run_id = ARGV.delete_at(0)
+  config = parsed_manifest
+  bot_name = config["bot_id"]
   puts "Started bot #{bot_name}, run #{run_id}..."
   if ARGV.size == 5
     run_params = Base64.decode64(ARGV[-1])
     ARGV[-1] = Shellwords.shellescape(run_params)
   end
   count = 0
-  config = api.get_config_vars(bot)
+  puts ARGV.join(" ")
   command_output_each_line(ARGV.join(" "), {}) do |line|
     if line.strip == 'NOT FOUND'
       line = {
@@ -80,5 +80,15 @@ def check_output_with_timeout(stdout, initial_interval = 10, timeout = 21600)
     interval *= 2
   end
 end
+
+def parsed_manifest
+  begin
+    manifest_path = "/repo/manifest.json"
+    JSON.parse(open(manifest_path).read)
+  rescue Errno::ENOENT
+    raise "Missing `manifest.json`!"
+  end
+end
+
 
 send()
