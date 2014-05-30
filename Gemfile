@@ -59,6 +59,9 @@ gem "puma"
 gem 'sync'
 gem 'multiblock'
 
+# Required to keep capistrano happy
+gem 'net-ssh', '2.7.0'
+
 group :production do
   gem "dalli"
 end

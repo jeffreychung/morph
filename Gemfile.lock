@@ -251,7 +251,7 @@ GEM
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
       net-ssh (>= 2.6.5)
-    net-ssh (2.9.0)
+    net-ssh (2.7.0)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
     newrelic_rpm (3.7.2.195)
@@ -455,6 +455,7 @@ DEPENDENCIES
   kaminari-bootstrap (~> 3.0.1)
   multiblock
   mysql2
+  net-ssh (= 2.7.0)
   newrelic_rpm
   nokogiri
   octokit

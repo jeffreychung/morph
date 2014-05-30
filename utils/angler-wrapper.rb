@@ -18,14 +18,13 @@ def send
   Hutch.connect({}, config)
   repo_name = ARGV.delete_at(0)
   run_id = ARGV.delete_at(0)
-  config = parsed_manifest
+  manifest = parsed_manifest
   puts "Started bot #{repo_name}, run #{run_id}..."
   if ARGV.size == 5
     run_params = Base64.decode64(ARGV[-1])
     ARGV[-1] = Shellwords.shellescape(run_params)
   end
   count = 0
-  puts ARGV.join(" ")
   command_output_each_line(ARGV.join(" "), {}) do |line|
     if line.strip == 'NOT FOUND'
       line = {
@@ -38,11 +37,12 @@ def send
         data: JSON.parse(line),
         export_date: Time.now.iso8601
       }
-      line[:data_type] = config["data_type"]
-      line[:identifying_fields] = config["identifying_fields"]
+      line[:data_type] = manifest["data_type"]
+      line[:identifying_fields] = manifest["identifying_fields"]
     end
-    line[:bot_name] = config["bot_id"]
-    line[:run_id] = run_id
+
+    line[:bot_name] = manifest["bot_id"]
+    line[:run_id] = run_id == 'draft' ? run_id : run_id.to_i
     line[:type] = 'bot.record'
     Hutch.publish('bot.record', line)
     count += 1
@@ -80,15 +80,5 @@ def check_output_with_timeout(stdout, initial_interval = 10, timeout = 21600)
     interval *= 2
   end
 end
-
-def parsed_manifest
-  begin
-    manifest_path = "/repo/manifest.json"
-    JSON.parse(open(manifest_path).read)
-  rescue Errno::ENOENT
-    raise "Missing `manifest.json`!"
-  end
-end
-
 
 send()
