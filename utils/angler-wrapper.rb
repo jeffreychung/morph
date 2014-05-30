@@ -81,4 +81,13 @@ def check_output_with_timeout(stdout, initial_interval = 10, timeout = 21600)
   end
 end
 
+def parsed_manifest
+  begin
+    manifest_path = "/repo/manifest.json"
+    JSON.parse(open(manifest_path).read)
+  rescue Errno::ENOENT
+    raise "Missing `manifest.json`!"
+  end
+end
+
 send()
