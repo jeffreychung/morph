@@ -97,6 +97,9 @@ namespace :deploy do
     run "cp /oc/openc/secure_config/morph-dotenv #{shared_path}/config/morph-dotenv"
   end
 
+  task :restart do
+    sudo "/etc/init.d/morph restart"
+  end
 
   namespace :assets do
     # This block taken from capistrano, but we want to run in slightly different order, otherwise probs with database.yml
