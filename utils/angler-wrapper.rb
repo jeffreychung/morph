@@ -16,16 +16,22 @@ def send
   config.set(:mq_vhost, '/')
   config.set(:log_level, Logger::WARN)
   Hutch.connect({}, config)
-  repo_name = ARGV.delete_at(0)
-  run_id = ARGV.delete_at(0)
-  manifest = parsed_manifest
-  puts "Started bot #{repo_name}, run #{run_id}..."
-  if ARGV.size == 5
-    run_params = Base64.decode64(ARGV[-1])
-    ARGV[-1] = Shellwords.shellescape(run_params)
+
+  manifest = parsed_config('manifest.json')
+  config = parsed_config('runtime.json')
+
+  puts "Started bot #{config[:name]}, run #{config[:run_id]}..."
+
+  args = ARGV.clone
+
+  args << config[:name]
+
+  if config[:run_params]
+    args << Shellwords.shellescape(config[:run_params])
   end
+
   count = 0
-  command_output_each_line(ARGV.join(" "), {}) do |line|
+  command_output_each_line(args.join(" "), {}) do |line|
     if line.strip == 'NOT FOUND'
       line = {
         data: JSON.parse(run_params),
@@ -42,7 +48,7 @@ def send
     end
 
     line[:bot_name] = manifest["bot_id"]
-    line[:run_id] = run_id == 'draft' ? run_id : run_id.to_i
+    line[:run_id] = config[:run_id]
     line[:type] = 'bot.record'
     Hutch.publish('bot.record', line)
     count += 1
@@ -81,12 +87,12 @@ def check_output_with_timeout(stdout, initial_interval = 10, timeout = 21600)
   end
 end
 
-def parsed_manifest
+def parsed_config(filename)
   begin
-    manifest_path = "/repo/manifest.json"
-    JSON.parse(open(manifest_path).read)
+    path = "/repo/#{filename}"
+    JSON.parse(open(path).read)
   rescue Errno::ENOENT
-    raise "Missing `manifest.json`!"
+    raise "Missing `#{filename}`!"
   end
 end
 

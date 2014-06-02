@@ -131,21 +131,21 @@ class Run < ActiveRecord::Base
       run_id = self.id
     end
 
+    config = {
+      :name => name,
+      :run_id => run_id,
+      :run_params => run_params,
+    }
+
+    File.open(File.join(repo_path, 'runtime.json'), 'w') do |f|
+      f.write(config.to_json)
+    end
+
     command = [
       Morph::Language.binary_name(language),
       '/utils/angler-wrapper.rb',
-      name,
-      run_id,
       Morph::Language.scraper_command(language),
-      name
     ]
-
-    if run_params.present?
-      # run_params are base 64 encoded to ensure that any quotes and spaces in
-      # the JSON are not misinterpreted when passed to Docker.  For some
-      # reason, Shellwords.shellescape doesn't quite work here.
-      command << Base64.encode64(run_params)
-    end
 
     command = Metric.command(command.join(' '), Run.time_output_filename)
 
