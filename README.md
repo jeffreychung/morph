@@ -43,6 +43,11 @@ Now you'll need to build the Docker container that scrapers run in.
 
     bundle exec dotenv rake app:update_docker_image
 
+Note: When Peter tried this, it didn't work and so he had to run the following
+in vagrant:
+
+    sudo docker -H tcp://127.0.0.1:4243 pull opencorporates/morph-ruby
+
 Now you can start the server
 
     bundle exec dotenv rake db:setup
