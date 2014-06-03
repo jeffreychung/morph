@@ -8,7 +8,7 @@ require 'hutch/logging'
 require 'time'
 require 'turbot_api'
 
-def send
+def connect_to_hutch
   config = Hutch::Config
   config.set(:mq_host, 'rabbit1')
   config.set(:mq_api_host, 'rabbit1')
@@ -16,18 +16,22 @@ def send
   config.set(:mq_vhost, '/')
   config.set(:log_level, Logger::WARN)
   Hutch.connect({}, config)
+end
+
+def send
+  connect_to_hutch
 
   manifest = parsed_config('manifest.json')
   config = parsed_config('runtime.json')
 
-  puts "Started bot #{config[:name]}, run #{config[:run_id]}..."
+  puts "Started bot #{config['name']}, run #{config['run_id']}..."
 
   args = ARGV.clone
 
-  args << config[:name]
+  args << config['name']
 
-  if config[:run_params]
-    args << Shellwords.shellescape(config[:run_params])
+  if config['run_params']
+    args << Shellwords.shellescape(config['run_params'])
   end
 
   count = 0
@@ -48,11 +52,21 @@ def send
     end
 
     line[:bot_name] = manifest["bot_id"]
-    line[:run_id] = config[:run_id]
+    line[:run_id] = config['run_id']
     line[:type] = 'bot.record'
     Hutch.publish('bot.record', line)
     count += 1
   end
+
+  unless manifest['stateful']
+    message = {
+      :type => 'run.ended',
+      :bot_name => manifest['bot_id'],
+      :run_id => config['run_id'],
+    }
+    Hutch.publish('bot.record', message)
+  end
+
   puts "Finished. Wrote #{count} records"
 end
 
