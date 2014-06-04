@@ -23,6 +23,7 @@ set :normalize_asset_timestamps, false
 set :asset_env, "RAILS_GROUPS=assets"
 set :assets_prefix, "assets"
 
+set :branch, 'spike-one'
 
 ssh_options[:forward_agent] = true
 
