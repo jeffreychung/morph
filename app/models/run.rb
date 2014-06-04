@@ -1,3 +1,5 @@
+require 'turbot_api'
+
 class Run < ActiveRecord::Base
   include Sync::Actions
   belongs_to :owner
