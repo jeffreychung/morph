@@ -221,4 +221,5 @@ class Run < ActiveRecord::Base
       :host => 'http://turbot.opencorporates.com',
       :api_key => TURBOT_API_KEY,
     )
+  end
 end
