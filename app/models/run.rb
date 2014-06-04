@@ -121,14 +121,10 @@ class Run < ActiveRecord::Base
     end
 
     if run_params.present?
-      p = JSON.parse(run_params)
-      if p["run"]
-        run_id = p["run"]
-      else
-        run_id = "update"
-      end
+      run_id = "update"
     else
-      run_id = self.id
+      # Notify turbot that run is starting, and get run_id
+      run_id = turbot_api.start_run(name).data[:run_id]
     end
 
     config = {
@@ -162,6 +158,9 @@ class Run < ActiveRecord::Base
           update_attributes(ip_address: ip)
         end
     end
+
+    # Notify turbot that run has finished
+    turbot_api.stop_run(name) unless run_params.present?
 
     # Now collect and save the metrics
     begin
@@ -215,4 +214,11 @@ class Run < ActiveRecord::Base
       go!
     end
   end
+
+  private
+  def turbot_api
+    @turbot_api ||= Turbot::API.new(
+      :host => 'http://turbot.opencorporates.com',
+      :api_key => TURBOT_API_KEY,
+    )
 end

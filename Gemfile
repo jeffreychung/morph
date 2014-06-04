@@ -58,6 +58,7 @@ gem 'faye'
 gem "puma"
 gem 'sync'
 gem 'multiblock'
+gem 'turbot-api'
 
 # Required to keep capistrano happy
 gem 'net-ssh', '2.7.0'
