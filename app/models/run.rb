@@ -220,7 +220,7 @@ class Run < ActiveRecord::Base
   private
   def turbot_api
     @turbot_api ||= Turbot::API.new(
-      :host => 'http://turbot.opencorporates.com',
+      :host => 'http://turbot',
       :api_key => ENV['TURBOT_API_KEY'],
     )
   end
