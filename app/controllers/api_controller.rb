@@ -46,6 +46,7 @@ class ApiController < ApplicationController
 
   def run_with_params
     # TODO: authorization
+    Rails.logger.info('ApiController#run_with_params')
     scraper = Scraper.friendly.find(params[:id])
     run_params = params.except('api_key', 'controller', 'action', 'id', 'scraper')
     scraper.queue!(run_params)
