@@ -136,7 +136,7 @@ class ScrapersController < ApplicationController
   def run
     scraper = Scraper.friendly.find(params[:id])
     if scraper.can_write?(current_user)
-      scraper.queue!(:delay => params[:delay])
+      scraper.queue!
       scraper.reload
       sync_update scraper
     else
