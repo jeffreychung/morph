@@ -405,7 +405,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    turbot-api (0.0.4)
+    turbot-api (0.0.5)
       actionpack (~> 4.0.3)
       rest-client (~> 1.6.1)
       rubyzip
