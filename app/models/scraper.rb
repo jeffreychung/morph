@@ -172,7 +172,7 @@ class Scraper < ActiveRecord::Base
     last_run.nil? || last_run.finished?
   end
 
-  def queue!(run_params=nil)
+  def queue!(run_params={})
     Rails.logger.info('Scraper#queue')
     # Guard against more than one of a particular scraper running at the same time
     if runnable?
