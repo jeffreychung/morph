@@ -100,6 +100,7 @@ namespace :deploy do
 
   task :restart do
     sudo "/etc/init.d/morph restart"
+    sudo "/etc/init.d/nginx restart"
   end
 
   namespace :assets do
