@@ -6,8 +6,13 @@ class DelayedRunWorker
     Rails.logger.info("DelayedRunWorker performing with run #{run_id}")
     run = Run.find(run_id)
     scraper = run.scraper
-    Rails.logger.info("DelayedRunWorker performing with scraper #{scraper.name}")
-    run.synch_and_go!
+
+    if scraper.runnable?
+      Rails.logger.info("DelayedRunWorker running scraper #{scraper.name}")
+      run.synch_and_go!
+    else
+      Rails.logger.info("Scraper #{scraper.name} not runnable")
+    end
   end
 end
 
