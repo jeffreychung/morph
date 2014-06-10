@@ -173,29 +173,26 @@ class Scraper < ActiveRecord::Base
   end
 
   def queue!(run_params={})
-    Rails.logger.info('Scraper#queue')
     # Guard against more than one of a particular scraper running at the same time
-    delay = run_params.delete(:delay)
+    if runnable?
+      delay = run_params.delete(:delay)
 
-    run = runs.new(
-      queued_at: Time.now,
-      auto: false,
-      owner_id: owner_id,
-      run_params: run_params.present? ? run_params.to_json : nil
-    )
+      run = runs.create!(
+        queued_at: Time.now,
+        auto: false,
+        owner_id: owner_id,
+        run_params: run_params.present? ? run_params.to_json : nil
+      )
 
-    if delay.present?
-      Rails.logger.info("DelayedRunWorker scheduled to run #{name} in #{delay} seconds")
-      run.save!
-      DelayedRunWorker.perform_in(delay, run.id)
-    else
-      if runnable?
-        Rails.logger.info("RunWorker scheduled to run #{name} asychronously")
-        run.save!
-        RunWorker.perform_async(run.id)
+      if delay.present?
+        Rails.logger.info("RunWorker scheduled to run #{name} in #{delay} seconds")
+        RunWorker.perform_in(delay, run.id)
       else
-        Rails.logger.info("Scraper #{name} not runnable")
+        Rails.logger.info("RunWorker scheduled to run #{name} asychronously")
+        RunWorker.perform_async(run.id)
       end
+    else
+      Rails.logger.info("Scraper #{name} not runnable")
     end
   end
 
