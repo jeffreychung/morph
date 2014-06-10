@@ -161,9 +161,6 @@ class Run < ActiveRecord::Base
         end
     end
 
-    # Notify turbot that run has finished
-    turbot_api.stop_run(name) unless run_params.present?
-
     # Now collect and save the metrics
     begin
       metric = Metric.read_from_file(time_output_path)
@@ -193,6 +190,9 @@ class Run < ActiveRecord::Base
       scraper.reload
       sync_update scraper
     end
+
+    # Notify turbot that run has finished
+    turbot_api.stop_run(name) unless run_params.present?
   end
 
   def log(stream, text)
