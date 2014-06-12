@@ -97,7 +97,11 @@ class Run < ActiveRecord::Base
   end
 
   def docker_image
-    "opencorporates/morph-#{language}"
+    if language == "ruby"
+      "opencorporates/morph-#{language}"
+    else
+      "opencorporates/morph-#{language}"
+    end
   end
 
   def git_revision_github_url
@@ -140,13 +144,12 @@ class Run < ActiveRecord::Base
     end
 
     command = [
-      Morph::Language.binary_name(language),
+      Morph::Language.binary_name(:ruby),
       '/utils/angler-wrapper.rb',
       Morph::Language.scraper_command(language),
     ]
 
     command = Metric.command(command.join(' '), Run.time_output_filename)
-
     status_code = Morph::DockerRunner.run(
       command: command,
       image_name: docker_image,
