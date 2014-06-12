@@ -83,6 +83,19 @@ By default in development mails are sent to [Mailcatcher](http://mailcatcher.me/
 
     gem install mailcatcher
 
+### DNS to private services
+
+If you have scrapers that want to connect to private services, you may
+have to configure the default DNS settings for Docker manually -
+particularly if you are on Ubuntu, which uses `dnsmasq` to provide DNS
+on localhost.
+
+On Ubuntu, edit `/etc/default/docker.io` and add:
+
+    DOCKER_OPTS="-dns 10.43.0.10 -dns 10.43.0.20 -dns 8.8.8.8"
+
+(replacing the first two with your own internal DNS)
+
 ### Deploying to production
 
 This section will not be relevant to most people. It will however be relevant if you're deploying to a production server.
