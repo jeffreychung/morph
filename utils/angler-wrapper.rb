@@ -10,8 +10,8 @@ require 'turbot_api'
 
 def connect_to_hutch
   config = Hutch::Config
-  config.set(:mq_host, 'rabbit1')
-  config.set(:mq_api_host, 'rabbit1')
+  config.set(:mq_host, 'rabbit1.opencorporates.internal')
+  config.set(:mq_api_host, 'rabbit1.opencorporates.internal')
   config.set(:mq_api_port, 55672)
   config.set(:mq_vhost, '/')
   config.set(:log_level, Logger::WARN)
