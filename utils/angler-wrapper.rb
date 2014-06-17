@@ -76,7 +76,7 @@ def command_output_each_line(command, options={})
       check_output_with_timeout(stdout)
 
       begin
-        result = stdout.readline.strip
+        result = stdout.readline.strip.force_encoding('utf-8')
         yield result unless result.empty?
         # add run id and bot name
       rescue EOFError
