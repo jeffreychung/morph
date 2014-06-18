@@ -36,26 +36,37 @@ def send
 
   count = 0
   command_output_each_line(args.join(" "), {}) do |line|
-    if line.strip == 'NOT FOUND'
-      line = {
+    case line.strip
+    when 'NOT FOUND'
+      record = {
+        type: 'bot.record',
+        bot_name: manifest['bot_id'],
+        run_id: config['run_id'],
         data: JSON.parse(run_params),
         end_date: Time.now.iso8601,
         end_date_type: 'before'
       }
-    else
-      line = {
-        data: JSON.parse(line),
-        export_date: Time.now.iso8601
+      Hutch.publish('bot.record', record)
+    when 'RUN ENDED'
+      message = {
+        :type => 'run.ended',
+        :bot_name => manifest['bot_id'],
+        :run_id => config['run_id'],
       }
-      line[:data_type] = manifest["data_type"]
-      line[:identifying_fields] = manifest["identifying_fields"]
+      Hutch.publish('bot.record', message)
+    else
+      record = {
+        type: 'bot.record',
+        bot_name: manifest['bot_id'],
+        run_id: config['run_id'],
+        data: JSON.parse(line),
+        export_date: Time.now.iso8601,
+        data_type: manifest['data_type'],
+        identifying_fields: manifest['identifying_fields']
+      }
+      Hutch.publish('bot.record', record)
+      count += 1
     end
-
-    line[:bot_name] = manifest["bot_id"]
-    line[:run_id] = config['run_id']
-    line[:type] = 'bot.record'
-    Hutch.publish('bot.record', line)
-    count += 1
   end
 
   unless manifest['stateful']
