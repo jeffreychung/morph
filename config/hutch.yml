@@ -1,0 +1,12 @@
+development:
+  mq_host: rabbit1
+  mq_api_host: rabbit1
+  mq_api_port: 55672
+test:
+  mq_host: rabbit1
+  mq_api_host: rabbit1
+  mq_api_port: 55672
+production:
+  mq_host: rabbit1
+  mq_api_host: rabbit1
+  mq_api_port: 55672

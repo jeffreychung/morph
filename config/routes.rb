@@ -1,4 +1,6 @@
 Morph::Application.routes.draw do
+  post '/runs', :controller => 'runs', :action => 'run'
+
   ActiveAdmin.routes(self)
   # Owner.table_exists? is workaround to allow migration to add STI Owner/User table to run
   if Owner.table_exists?
