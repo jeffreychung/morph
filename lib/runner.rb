@@ -239,7 +239,9 @@ class Runner
   end
 
   def report_run_ended(status_code, metrics, output)
-    url = "#{ENV['TURBOT_HOST']}/api/runs/#{@run_uid}"
+    # TODO find the right place to put this
+    host = ENV['TURBOT_HOST'] || 'http://turbot'
+    url = "#{host}/api/runs/#{@run_uid}"
 
     params = {
       :api_key => ENV['TURBOT_API_KEY'],
@@ -248,6 +250,7 @@ class Runner
       :output => output
     }
 
+    Rails.logger.info("Reporting run ended to #{url}")
     RestClient.put(url, params.to_json, :content_type => 'application/json')
   end
 
