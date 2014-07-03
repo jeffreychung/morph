@@ -26,7 +26,7 @@ class Runner
     end
 
     metrics = read_metrics(File.join(data_path, 'time.out'))
-    output = File.read(stderr_out_path)
+    output = read_output
     
     report_run_ended(status_code, metrics, output)
   ensure
@@ -207,6 +207,11 @@ class Runner
     end
 
     metrics
+  end
+
+  def read_output
+    @stderr_file.close
+    output = File.read(stderr_out_path)
   end
 
   def parse_metric_line(line)
