@@ -191,3 +191,4 @@ class Runner < TurbotRunner::BaseRunner
 end
 
 runner = Runner.new('/repo')
+runner.run
