@@ -1,4 +1,11 @@
 class Runner
+  @queue = :runs
+
+  def self.perform(bot_name, run_id, run_uid)
+    runner = Runner.new(bot_name, run_id, run_uid)
+    runner.run
+  end
+
   def initialize(bot_name, run_id, run_uid, run_params={})
     @bot_name = bot_name
     @run_id = run_id
