@@ -166,7 +166,7 @@ class Runner
     when 'RUN ENDED'
       # TODO
     else
-      data = JSON.parse(chunk)
+      data = JSON.parse(line.strip)
       data_type = data.delete('data_type')
       record = {
         type: 'bot.record',
