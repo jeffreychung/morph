@@ -3,5 +3,6 @@ class RunsController < ApplicationController
 
   def run
     Resque.enqueue(Runner, params[:bot_name], params[:run_id], params[:run_uid])
+    render :json, :status => :ok
   end
 end
