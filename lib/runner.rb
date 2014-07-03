@@ -181,6 +181,16 @@ class Runner
     end
   end
 
+  def identifying_fields_for(data_type)
+    if data_type == config['data_type']
+      config['identifying_fields']
+    else
+      transformers = config['transformers'].select {|transformer| transformer['data_type'] == data_type}
+      raise "Expected to find precisely 1 matching transformer matching #{data_type} in #{config}" unless transformers.size == 1
+      transformers[0]['identifying_fields']
+    end
+  end
+
   def send_to_angler(record)
     @num_records += 1
     Hutch.publish('bot.record', record)
@@ -264,6 +274,10 @@ class Runner
 
     Rails.logger.info("Reporting run ended to #{url}")
     RestClient.put(url, params.to_json, :content_type => 'application/json')
+  end
+
+  def config
+    @config ||= JSON.parse(File.read(File.join(repo_path, 'manifest.json')))
   end
 
   def repo_path
