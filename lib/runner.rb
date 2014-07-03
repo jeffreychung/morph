@@ -148,7 +148,7 @@ class Runner
   end
 
   def command
-    "/usr/bin/time -v -o time.out ruby /utils/runner.rb #{@bot_name}"
+    "/usr/bin/time -v -o time.out ruby /utils/wrapper.rb #{@bot_name}"
   end
 
   def handle_stdout(chunk)
