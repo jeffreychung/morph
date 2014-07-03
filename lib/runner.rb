@@ -122,8 +122,7 @@ class Runner
         'name' => "#{@bot_name}_#{@run_uid}",
         'Cmd' => ['/bin/bash', '-l', '-c', command],
         'User' => 'scraper',
-        # TODO handle non-ruby scrapers
-        'Image' => 'opencorporates/morph-ruby',
+        'Image' => image,
         # See explanation in https://github.com/openaustralia/morph/issues/242
         'CpuShares' => 307,
         # On a 1G machine we're allowing a max of 10 containers to run at a time. So, 100M
@@ -149,6 +148,20 @@ class Runner
 
   def command
     "/usr/bin/time -v -o time.out ruby /utils/wrapper.rb #{@bot_name}"
+  end
+
+  def image
+    "opencorporates/morph-#{language}"
+  end
+
+  def language
+    if File.exist?(File.join(repo_path, 'scraper.rb'))
+      'ruby'
+    elsif File.exist?(File.join(repo_path, 'scraper.py'))
+      'python'
+    else
+      raise "Could not find scraper at #{repo_path}"
+    end
   end
 
   def handle_stdout(chunk)
