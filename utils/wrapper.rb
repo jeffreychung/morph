@@ -1,5 +1,5 @@
 require 'json'
-require 'turbot_runner'
+#require 'turbot_runner'
 
 # Flush output immediately
 STDOUT.sync = true
