@@ -1,4 +1,5 @@
 require 'json'
+require 'json-schema'
 require 'turbot_runner'
 
 # Flush output immediately
