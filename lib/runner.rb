@@ -15,6 +15,7 @@ class Runner
     end
     @run_uid = run_uid
     @run_params = run_params
+    @run_ended = false
   end
 
   def run
@@ -32,6 +33,11 @@ class Runner
     metrics = read_metrics(File.join(data_path, 'time.out'))
     output = read_output
     
+    if !config['stateful']
+      @run_ended = true
+      send_run_ended_to_angler
+    end
+
     report_run_ended(status_code, metrics, output)
   ensure
     clean_up
@@ -185,7 +191,8 @@ class Runner
     when 'NOT FOUND'
       # TODO
     when 'RUN ENDED'
-      # TODO
+      @run_ended = true
+      send_run_ended_to_angler
     else
       data = JSON.parse(line.strip)
       data_type = data.delete('data_type')
@@ -198,7 +205,7 @@ class Runner
         data_type: data_type,
         identifying_fields: identifying_fields_for(data_type),
       }
-      send_to_angler(record)
+      send_record_to_angler(record)
     end
   end
 
@@ -212,9 +219,18 @@ class Runner
     end
   end
 
-  def send_to_angler(record)
+  def send_record_to_angler(record)
     @num_records += 1
     Hutch.publish('bot.record', record)
+  end
+
+  def send_run_ended_to_angler
+    message = {
+      :type => 'run.ended',
+      :bot_name => @bot_name,
+      :run_id => @run_id
+    }
+    Hutch.publish('bot.record', message)
   end
 
   def handle_stderr(chunk)
@@ -290,7 +306,8 @@ class Runner
       :api_key => ENV['TURBOT_API_KEY'],
       :status_code => status_code,
       :metrics => metrics,
-      :output => output
+      :output => output,
+      :run_ended => @run_ended
     }
 
     Rails.logger.info("Reporting run ended to #{url}")
