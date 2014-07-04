@@ -8,7 +8,11 @@ class Runner
 
   def initialize(bot_name, run_id, run_uid, run_params={})
     @bot_name = bot_name
-    @run_id = run_id
+    if run_id == 'draft'
+      @run_id = 'draft'
+    else
+      @run_id = run_id.to_i
+    end
     @run_uid = run_uid
     @run_params = run_params
   end
