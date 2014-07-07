@@ -113,8 +113,8 @@ class Runner
       status_code = container.json['State']['ExitCode']
 
     rescue Exception => e
-      # TODO handle error here
-      Rails.logger.info("Hit error when running container: #{e}")
+      Rails.logger.error("Hit error when running container: #{e}")
+      e.backtrace.each { |line| Rails.logger.error(line) }
       container.kill
     ensure
       Rails.logger.info('Waiting for container to finish')
@@ -145,7 +145,7 @@ class Runner
       Docker::Container.create(container_params, conn)
     rescue Excon::Errors::SocketError => e
       Rails.logger.info("Hit connection error: #{e}")
-      # TODO handle error here
+      e.backtrace.each { |line| Rails.logger.error(line) }
       raise
     end
   end
