@@ -54,7 +54,7 @@ class Runner
     synchronise_repo
     write_runtime_config
 
-    @stderr_file = File.open(stderr_out_path, 'w')
+    @stderr_file = File.open(stderr_out_path, 'wb')
   end
 
   def clean_up
