@@ -97,31 +97,24 @@ class Runner
   def run_in_container
     container = create_container
 
-    begin
-      binds = [
-        "#{local_root_path}/#{repo_path}:/repo:ro",
-        "#{local_root_path}/#{data_path}:/data",
-        "#{local_root_path}/utils:/utils:ro"
-      ]
-      Rails.logger.info("Starting container with bindings: #{binds}")
-      container.start('Binds' => binds)
+    binds = [
+      "#{local_root_path}/#{repo_path}:/repo:ro",
+      "#{local_root_path}/#{data_path}:/data",
+      "#{local_root_path}/utils:/utils:ro"
+    ]
+    Rails.logger.info("Starting container with bindings: #{binds}")
+    container.start('Binds' => binds)
 
-      container.attach(:logs => true) do |stream, chunk|
-        yield stream, chunk
-      end
-
-      status_code = container.json['State']['ExitCode']
-
-    rescue Exception => e
-      Rails.logger.error("Hit error when running container: #{e}")
-      e.backtrace.each { |line| Rails.logger.error(line) }
-      container.kill
-    ensure
-      Rails.logger.info('Waiting for container to finish')
-      container.wait
-      Rails.logger.info('Deleting container')
-      container.delete
+    container.attach(:logs => true) do |stream, chunk|
+      yield stream, chunk
     end
+
+    status_code = container.json['State']['ExitCode']
+
+    Rails.logger.info('Waiting for container to finish')
+    container.wait
+    Rails.logger.info('Deleting container')
+    container.delete
 
     Rails.logger.info("Returning with status_code #{status_code}")
     status_code
