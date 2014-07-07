@@ -1,3 +1,5 @@
+require 'json'
+
 class Runner
   @queue = :runs
 
@@ -16,6 +18,8 @@ class Runner
     @run_uid = run_uid
     @run_params = run_params
     @run_ended = false
+    @num_records = 0
+    @stdout_buffer = ''
   end
 
   def run
@@ -50,8 +54,6 @@ class Runner
     synchronise_repo
     write_runtime_config
 
-    @num_records = 0
-    @stdout_buffer = ''
     @stderr_file = File.open(stderr_out_path, 'w')
   end
 
@@ -179,7 +181,13 @@ class Runner
   end
 
   def handle_stdout(chunk)
-    *lines, @stdout_buffer = (@stdout_buffer + chunk).lines
+    lines = (@stdout_buffer + chunk).lines
+
+    if lines[-1].end_with?("\n")
+      @stdout_buffer = ''
+    else
+      @stdout_buffer = lines.pop
+    end
 
     lines.each do |line|
       handle_stdout_line(line)
