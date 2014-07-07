@@ -115,6 +115,7 @@ class Runner
     rescue Exception => e
       Rails.logger.error("Hit error when running container: #{e}")
       e.backtrace.each { |line| Rails.logger.error(line) }
+      Airbrake.notify(e)
       begin
         container.kill
       rescue Excon::Errors::SocketError => e
