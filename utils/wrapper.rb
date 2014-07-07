@@ -28,3 +28,9 @@ end
 
 runner = Runner.new('/repo')
 runner.run
+
+if runner.successful?
+  exit(0)
+else
+  exit(1)
+end
