@@ -1,0 +1,59 @@
+                                                       Prefix Verb     URI Pattern                                                        Controller#Action
+                                                   admin_root GET      /admin(.:format)                                                   admin/dashboard#index
+                                              admin_dashboard GET      /admin/dashboard(.:format)                                         admin/dashboard#index
+                                    batch_action_admin_owners POST     /admin/owners/batch_action(.:format)                               admin/owners#batch_action
+                                                 admin_owners GET      /admin/owners(.:format)                                            admin/owners#index
+                                                  admin_owner GET      /admin/owners/:id(.:format)                                        admin/owners#show
+                                      batch_action_admin_runs POST     /admin/runs/batch_action(.:format)                                 admin/runs#batch_action
+                                                   admin_runs GET      /admin/runs(.:format)                                              admin/runs#index
+                                                    admin_run GET      /admin/runs/:id(.:format)                                          admin/runs#show
+                                               admin_comments GET      /admin/comments(.:format)                                          admin/comments#index
+                                                              POST     /admin/comments(.:format)                                          admin/comments#create
+                                                admin_comment GET      /admin/comments/:id(.:format)                                      admin/comments#show
+                                      user_omniauth_authorize GET|POST /users/auth/:provider(.:format)                                    users/omniauth_callbacks#passthru {:provider=>/developer|github/}
+                                       user_omniauth_callback GET|POST /users/auth/:action/callback(.:format)                             users/omniauth_callbacks#(?-mix:developer|github)
+                                                discourse_sso GET      /discourse/sso(.:format)                                           discourse_sso#sso
+                                                 sync_refetch GET      /sync/refetch(.:format)                                            sync/refetches#show
+                                         destroy_user_session GET      /sign_out(.:format)                                                devise/sessions#destroy
+                                             new_user_session GET      /sign_in(.:format)                                                 devise/sessions#new
+                                                  sidekiq_web          /admin/jobs                                                        Sidekiq::Web
+                                                         root GET      /                                                                  static#index
+                                                          api GET      /api(.:format)                                                     redirect(301)
+                                      api_documentation_index GET      /documentation/api(.:format)                                       documentation#api
+                              what_is_new_documentation_index GET      /documentation/what_is_new(.:format)                               documentation#what_is_new
+examples_australian_members_of_parliament_documentation_index GET      /documentation/examples/australian_members_of_parliament(.:format) examples#australian_members_of_parliament
+                                          documentation_index GET      /documentation(.:format)                                           documentation#index
+                                                      pricing GET      /pricing(.:format)                                                 documentation#pricing
+                                                          run POST     /run(.:format)                                                     api#run_remote
+                                              turbot_scrapers POST     /turbot/scrapers(.:format)                                         api#create_from_git
+                                                         test GET      /test(.:format)                                                    api#test
+                                                user_settings GET      /settings(.:format)                                                users#settings
+                                               user_reset_key POST     /settings/reset_key(.:format)                                      users#reset_key
+                                                              GET      /scrapers/page/:page(.:format)                                     scrapers#index
+                                           github_new_scraper GET      /scrapers/new/github(.:format)                                     scrapers#github
+                                              github_scrapers POST     /scrapers/github(.:format)                                         scrapers#create_github
+                                         github_form_scrapers GET      /scrapers/github_form(.:format)                                    scrapers#github_form
+                                      scraperwiki_new_scraper GET      /scrapers/new/scraperwiki(.:format)                                scrapers#scraperwiki
+                                         scraperwiki_scrapers POST     /scrapers/scraperwiki(.:format)                                    scrapers#create_scraperwiki
+                                                     scrapers GET      /scrapers(.:format)                                                scrapers#index
+                                                              POST     /scrapers(.:format)                                                scrapers#create
+                                                  new_scraper GET      /scrapers/new(.:format)                                            scrapers#new
+                                                user_watching GET      /users/:id/watching(.:format)                                      users#watching
+                                                        users GET      /users(.:format)                                                   users#index
+                                                        owner GET      /:id(.:format)                                                     owners#show
+                                                  owner_watch POST     /:id/watch(.:format)                                               owners#watch
+                                                         user GET      /:id(.:format)                                                     users#show
+                                                 organization GET      /:id(.:format)                                                     organizations#show
+                                        scraperwiki_forks_new GET      /scraperwiki_forks/new(.:format)                                   redirect(301)
+                                              connection_logs POST     /connection_logs(.:format)                                         connection_logs#create
+                                                 scraper_data GET      /*id/data(.:format)                                                scrapers#data
+                                                scraper_watch POST     /*id/watch(.:format)                                               scrapers#watch
+                                             scraper_watchers GET      /*id/watchers(.:format)                                            scrapers#watchers
+                                             scraper_settings GET      /*id/settings(.:format)                                            scrapers#settings
+                                                      scraper GET      /*id(.:format)                                                     scrapers#show
+                                                              DELETE   /*id(.:format)                                                     scrapers#destroy
+                                                              PATCH    /*id(.:format)                                                     scrapers#update
+                                                  run_scraper POST     /*id/run(.:format)                                                 scrapers#run
+                                                              POST     /*id/run_with_params(.:format)                                     api#run_with_params
+                                                clear_scraper POST     /*id/clear(.:format)                                               scrapers#clear
+                                                              GET      /sync/refetch(.:format)                                            sync/refetches#show

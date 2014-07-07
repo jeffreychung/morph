@@ -58,6 +58,10 @@ gem 'faye'
 gem "puma"
 gem 'sync'
 gem 'multiblock'
+gem 'git'
+gem 'hutch'
+gem 'rest-client'
+gem 'resque'
 gem 'turbot-api'
 
 # Required to keep capistrano happy
