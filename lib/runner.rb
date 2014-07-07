@@ -117,10 +117,6 @@ class Runner
       Rails.logger.info("Hit error when running container: #{e}")
       container.kill
     ensure
-      # This sleep is to give the last transformer a chance a chance to finish.
-      # Without it, the last transformed record doesn't always get produced.
-      Rails.logger.info('Sleeping for 60 seconds')
-      sleep 60
       Rails.logger.info('Waiting for container to finish')
       container.wait
       Rails.logger.info('Deleting container')
