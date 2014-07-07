@@ -70,6 +70,9 @@ GEM
       thread_safe (~> 0.1)
       tzinfo (~> 0.3.37)
     addressable (2.3.5)
+    airbrake (4.0.0)
+      builder
+      multi_json
     amq-protocol (1.9.2)
     arbre (1.0.1)
       activesupport (>= 3.0.0)
@@ -448,6 +451,7 @@ PLATFORMS
 DEPENDENCIES
   RedCloth
   activeadmin!
+  airbrake
   archive-tar-minitar
   better_errors
   binding_of_caller

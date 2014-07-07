@@ -67,6 +67,8 @@ gem 'turbot-api'
 # Required to keep capistrano happy
 gem 'net-ssh', '2.7.0'
 
+gem 'airbrake'
+
 group :production do
   gem "dalli"
 end
