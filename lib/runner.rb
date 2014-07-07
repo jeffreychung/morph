@@ -134,25 +134,19 @@ class Runner
 
   def create_container
     conn = Docker::Connection.new(docker_url, chunk_size: 1, read_timeout: 4.hours)
-    begin  
-      container_params = {
-        'name' => "#{@bot_name}_#{@run_uid}",
-        'Cmd' => ['/bin/bash', '-l', '-c', command],
-        'User' => 'scraper',
-        'Image' => image,
-        # See explanation in https://github.com/openaustralia/morph/issues/242
-        'CpuShares' => 307,
-        # On a 1G machine we're allowing a max of 10 containers to run at a time. So, 100M
-        # TODO check this is right for openc use case
-        'Memory' => 100.megabytes,
-      }
-      Rails.logger.info("Creating container with params #{container_params}")
-      Docker::Container.create(container_params, conn)
-    rescue Excon::Errors::SocketError => e
-      Rails.logger.info("Hit connection error: #{e}")
-      e.backtrace.each { |line| Rails.logger.error(line) }
-      raise
-    end
+    container_params = {
+      'name' => "#{@bot_name}_#{@run_uid}",
+      'Cmd' => ['/bin/bash', '-l', '-c', command],
+      'User' => 'scraper',
+      'Image' => image,
+      # See explanation in https://github.com/openaustralia/morph/issues/242
+      'CpuShares' => 307,
+      # On a 1G machine we're allowing a max of 10 containers to run at a time. So, 100M
+      # TODO check this is right for openc use case
+      'Memory' => 100.megabytes,
+    }
+    Rails.logger.info("Creating container with params #{container_params}")
+    Docker::Container.create(container_params, conn)
   end
 
   def docker_url
