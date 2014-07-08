@@ -130,7 +130,8 @@ class Run < ActiveRecord::Base
       run_id = "update"
     else
       # Notify turbot that run is starting, and get run_id
-      run_id = turbot_api.start_run(name).data[:run_id]
+      #run_id = turbot_api.start_run(name).data[:run_id]
+      run_id = 123
     end
 
     config = {
@@ -195,7 +196,7 @@ class Run < ActiveRecord::Base
     end
 
     # Notify turbot that run has finished
-    turbot_api.stop_run(name) unless run_params.present?
+    #turbot_api.stop_run(name) unless run_params.present?
   end
 
   def log(stream, text)
