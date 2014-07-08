@@ -48,6 +48,12 @@ module Morph
           wrapper.call(:log, stream, chunk)
         end
         status_code = c.json["State"]["ExitCode"]
+        Rails.logger.info('-' * 80)
+        Rails.logger.info("status_code: #{status_code}")
+        Rails.logger.info('-' * 80)
+        puts('-' * 80)
+        puts("status_code: #{status_code}")
+        puts('-' * 80)
         puts "Docker container finished..."
       rescue Exception => e
         wrapper.call(:log,  :internal, "Morph internal error: #{e}\n")
