@@ -1,6 +1,8 @@
 module Morph
   class DockerRunner
     def self.run(options)
+      Rails.logger("DockerRunner options: #{options}")
+      puts("DockerRunner options: #{options}")
       wrapper = Multiblock.wrapper
       yield(wrapper)
 
