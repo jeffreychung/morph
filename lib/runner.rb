@@ -141,7 +141,7 @@ class Runner
   end
 
   def create_container
-    conn = Docker::Connection.new(docker_url, chunk_size: 1, read_timeout: 4.hours)
+    conn = Docker::Connection.new(docker_url, read_timeout: 4.hours)
     container_params = {
       'name' => "#{@bot_name}_#{@run_uid}",
       'Cmd' => ['/bin/bash', '-l', '-c', command],
