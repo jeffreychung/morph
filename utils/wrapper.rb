@@ -11,10 +11,13 @@ MAX_DRAFT_ROWS = 2000
 class Runner < TurbotRunner::BaseRunner
   @@count = 0
   def handle_valid_record(record, data_type)
-    interrupt if ENV['RUN_TYPE'] == "draft" && @@count > MAX_DRAFT_ROWS
-    record[:data_type] = data_type
-    STDOUT.puts(record.to_json)
-    @@count += 1
+    if ENV['RUN_TYPE'] == "draft" && @@count > MAX_DRAFT_ROWS
+      interrupt
+    else
+      record[:data_type] = data_type
+      STDOUT.puts(record.to_json)
+      @@count += 1
+    end
   end
 
   def handle_invalid_record(record, data_type, errors)
