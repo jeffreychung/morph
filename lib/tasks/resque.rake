@@ -49,7 +49,8 @@ namespace :resque do
   desc 'start all background resque daemons'
   task :start_daemons do
     # mrake_start "resque_scheduler resque:scheduler"
-    workers_config.each do |worker, config|
+    puts workers_config
+    workers_config().each do |worker, config|
       task_details = "resque_#{worker} resque:work_dont_fork QUEUE=#{config['queues']} #{config['cl_params']}"
       mrake_start task_details
     end
@@ -283,8 +284,7 @@ namespace :resque do
   end
 
   def self.workers_config(queue_suffix=nil)
-    resque_config_file = "config/resque_workers.yml"
-    YAML.load(resque_config_file)
+    YAML.load(open("config/resque_workers.yml").read)
   end
 
   def self.mrake_start(task_details)
