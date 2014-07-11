@@ -66,7 +66,9 @@ class Runner
   end
 
   def clean_up
-    @stderr_file.close unless @stderr_file && @stderr_file.closed?
+    if @stderr_file
+      @stderr_file.close unless @stderr_file.closed?
+    end
   end
 
   def connect_to_rabbitmq
