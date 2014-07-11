@@ -1,0 +1,20 @@
+resque_worker_1:
+  queues: 'runs'
+resque_worker_2:
+  queues: 'runs'
+resque_worker_3:
+  queues: 'runs'
+resque_worker_4:
+  queues: 'runs'
+resque_worker_5:
+  queues: 'runs'
+resque_worker_6:
+  queues: 'runs'
+resque_worker_7:
+  queues: 'runs'
+resque_worker_8:
+  queues: 'runs'
+resque_worker_9:
+  queues: 'runs'
+resque_worker_10:
+  queues: 'runs'
