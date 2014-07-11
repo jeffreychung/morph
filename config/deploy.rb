@@ -154,6 +154,19 @@ namespace :deploy do
 
 end
 
+namespace :resque do
+  desc "Stop the resque daemon"
+  task :stop do
+    run "cd #{current_path} && RAILS_ENV=production rake resque:stop_daemons; true"
+  end
+
+  desc "Start the resque daemon"
+  task :start do
+    run "cd #{current_path} && RAILS_ENV=production rake resque:start_daemons"
+  end
+end
+
+
 #before 'deploy:setup', 'deploy:install_apt_dependencies'
 before 'deploy:setup', 'rvm:install_rvm'
 before 'deploy:setup', 'rvm:install_ruby'
@@ -162,3 +175,6 @@ after 'deploy:update_code', 'deploy:create_folder_structure'
 after 'deploy:update_code', 'deploy:update_symlinks'
 after 'deploy:update_code', 'deploy:assets:symlink'
 after "deploy:assets:symlink", "deploy:assets:precompile"
+after "deploy:stop",    "resque:stop"
+after "deploy:start",   "resque:start"
+after "deploy:restart", "resque:stop", "resque:start"
