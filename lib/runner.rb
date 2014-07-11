@@ -3,8 +3,8 @@ require 'json'
 class Runner
   @queue = :runs
 
-  def self.perform(bot_name, run_id, run_uid, run_params={})
-    runner = Runner.new(bot_name, run_id, run_uid, run_params)
+  def self.perform(bot_name, run_id, run_uid, run_type)
+    runner = Runner.new(bot_name, run_id, run_uid, :run_type => run_type)
     runner.run
   end
 
