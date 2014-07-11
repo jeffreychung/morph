@@ -6,11 +6,15 @@ require 'turbot_runner'
 STDOUT.sync = true
 STDERR.sync = true
 
+MAX_DRAFT_ROWS = 2000
 
 class Runner < TurbotRunner::BaseRunner
+  @@count = 0
   def handle_valid_record(record, data_type)
     record[:data_type] = data_type
     STDOUT.puts(record.to_json)
+    interrupt if ENV['BOT_TYPE'] == "draft" && @@count > MAX_DRAFT_ROWS
+    @@count += 1
   end
 
   def handle_invalid_record(record, data_type, errors)
