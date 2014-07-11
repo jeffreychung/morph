@@ -44,7 +44,7 @@ class Runner
     else
       status_code = 0
     end
-    
+
     if !config['stateful']
       @run_ended = true
       send_run_ended_to_angler
@@ -149,6 +149,7 @@ class Runner
       'Image' => image,
       # See explanation in https://github.com/openaustralia/morph/issues/242
       'CpuShares' => 307,
+      'Env' => "BOT_TYPE=#{@run_params[:bot_type]}",
       # On a 1G machine we're allowing a max of 10 containers to run at a time. So, 100M
       # TODO check this is right for openc use case
       'Memory' => 100.megabytes,
@@ -332,11 +333,11 @@ class Runner
   def repo_path
     File.join(BASE_PATH, 'repo', @bot_name)
   end
-  
+
   def data_path
     File.join(BASE_PATH, 'data', @bot_name)
   end
-  
+
   def metadata_path
     File.join(BASE_PATH, 'metadata', @bot_name)
   end
