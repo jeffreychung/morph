@@ -45,7 +45,7 @@ class Runner
       status_code = 0
     end
 
-    if !config['stateful']
+    if !config['incremental'] && !config['manually_end_run'] # the former is legacy
       @run_ended = true
       send_run_ended_to_angler
     end
