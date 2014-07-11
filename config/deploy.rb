@@ -7,7 +7,7 @@ set :application, "morph"
 set :stages, %w(production)
 
 set :repository, 'git@github.com:sebbacon/morph.git'
-
+set :keep_releases, 10
 set :rvm_bin, '/home/openc/.rvm/bin/rvm'
 set :rvm_ruby_string, '2.0.0-p353'
 set :rvm_ruby_version, '2.0.0-p353'
