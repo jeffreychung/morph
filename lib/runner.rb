@@ -149,7 +149,7 @@ class Runner
       'Image' => image,
       # See explanation in https://github.com/openaustralia/morph/issues/242
       'CpuShares' => 307,
-      'Env' => "BOT_TYPE=#{@run_params[:bot_type]}",
+      'Env' => "RUN_TYPE=#{@run_params[:run_type]}",
       # On a 1G machine we're allowing a max of 10 containers to run at a time. So, 100M
       # TODO check this is right for openc use case
       'Memory' => 100.megabytes,

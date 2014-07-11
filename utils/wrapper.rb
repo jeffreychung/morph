@@ -13,7 +13,7 @@ class Runner < TurbotRunner::BaseRunner
   def handle_valid_record(record, data_type)
     record[:data_type] = data_type
     STDOUT.puts(record.to_json)
-    interrupt if ENV['BOT_TYPE'] == "draft" && @@count > MAX_DRAFT_ROWS
+    interrupt if ENV['RUN_TYPE'] == "draft" && @@count > MAX_DRAFT_ROWS
     @@count += 1
   end
 
