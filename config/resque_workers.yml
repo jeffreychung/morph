@@ -4,17 +4,3 @@ worker_2:
   queues: 'runs'
 worker_3:
   queues: 'runs'
-worker_4:
-  queues: 'runs'
-worker_5:
-  queues: 'runs'
-worker_6:
-  queues: 'runs'
-worker_7:
-  queues: 'runs'
-worker_8:
-  queues: 'runs'
-worker_9:
-  queues: 'runs'
-worker_10:
-  queues: 'runs'
