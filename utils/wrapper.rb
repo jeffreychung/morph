@@ -12,6 +12,7 @@ class Runner < TurbotRunner::BaseRunner
   @@count = 0
   def handle_valid_record(record, data_type)
     if ENV['RUN_TYPE'] == "draft" && @@count > MAX_DRAFT_ROWS
+      sleep 5 # allow some time for OS to flush bufferse
       interrupt
     else
       record[:data_type] = data_type
