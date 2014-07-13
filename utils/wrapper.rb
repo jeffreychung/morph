@@ -28,7 +28,7 @@ class Runner < TurbotRunner::BaseRunner
     errors.each {|error| puts " * #{error}"}
     STDERR.puts
   end
-x
+
   def handle_failed_run
     # This string is important.  We check for its presence in runner.rb to
     # determine whether the run was successful.  It would be much better if we
