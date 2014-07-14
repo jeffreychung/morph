@@ -157,12 +157,12 @@ end
 namespace :resque do
   desc "Stop the resque daemon"
   task :stop do
-    run "cd #{current_path} && RAILS_ENV=production rake resque:stop_daemons; true"
+    run "cd #{current_path} && RAILS_ENV=production bundle exec rake resque:stop_daemons; true"
   end
 
   desc "Start the resque daemon"
   task :start do
-    run "cd #{current_path} && RAILS_ENV=production rake resque:start_daemons"
+    run "cd #{current_path} && RAILS_ENV=production bundle exec rake resque:start_daemons"
   end
 end
 
@@ -176,5 +176,7 @@ after 'deploy:update_code', 'deploy:update_symlinks'
 after 'deploy:update_code', 'deploy:assets:symlink'
 after "deploy:assets:symlink", "deploy:assets:precompile"
 after "deploy:stop",    "resque:stop"
-after "deploy:start",   "resque:start"
-after "deploy:restart", "resque:stop", "resque:start"
+# The following two commented out because we need all current workers
+# to complete before we restart everything
+#  after "deploy:start",
+#"resque:start" after "deploy:restart", "resque:stop", "resque:start"
