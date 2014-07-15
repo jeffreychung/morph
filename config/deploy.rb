@@ -175,6 +175,7 @@ after 'deploy:update_code', 'deploy:create_folder_structure'
 after 'deploy:update_code', 'deploy:update_symlinks'
 after 'deploy:update_code', 'deploy:assets:symlink'
 after "deploy:assets:symlink", "deploy:assets:precompile"
-after "deploy:stop",    "resque:stop"
-after "deploy:start",   "resque:start"
-after "deploy:restart", "resque:stop", "resque:start"
+# TODO work out how to get resque to gracefully restart its workers
+#after "deploy:stop",    "resque:stop"
+#after "deploy:start",   "resque:start"
+#after "deploy:restart", "resque:stop", "resque:start"
