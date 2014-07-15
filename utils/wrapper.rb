@@ -9,15 +9,19 @@ STDERR.sync = true
 MAX_DRAFT_ROWS = 2000
 
 class Runner < TurbotRunner::BaseRunner
-  @@count = 0
+  def initialize(*)
+    super
+    @count = 0
+  end
+
   def handle_valid_record(record, data_type)
-    if ENV['RUN_TYPE'] == "draft" && @@count > MAX_DRAFT_ROWS
-      sleep 5 # allow some time for OS to flush bufferse
+    if ENV['RUN_TYPE'] == "draft" && @count > MAX_DRAFT_ROWS
+      sleep 5 # allow some time for OS to flush buffers
       interrupt
     else
       record[:data_type] = data_type
       STDOUT.puts(record.to_json)
-      @@count += 1
+      @count += 1
     end
   end
 
@@ -25,8 +29,11 @@ class Runner < TurbotRunner::BaseRunner
     STDERR.puts
     STDERR.puts "The following record is invalid:"
     STDERR.puts record.to_json
-    errors.each {|error| puts " * #{error}"}
+    errors.each {|error| STDERR.puts " * #{error}"}
     STDERR.puts
+
+    handle_failed_run
+    interrupt
   end
 
   def handle_failed_run
