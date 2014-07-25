@@ -37,14 +37,6 @@ class Runner
     metrics = read_metrics(File.join(data_path, 'time.out'))
     output = read_output
 
-    # This is hopefully a temporary workaround to the problem of docker not
-    # reliably picking up the return code of a script that it runs.
-    if output.include?('Bot did not run to completion')
-      status_code = 1
-    else
-      status_code = 0
-    end
-
     if !config['incremental'] && !config['manually_end_run'] # the former is legacy
       @run_ended = true
       send_run_ended_to_angler
