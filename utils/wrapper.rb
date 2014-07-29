@@ -49,9 +49,9 @@ end
 runner = Runner.new('/repo')
 runner.run
 
-# It'd be nice if this worked, but it doesn't. See note above.
-#if runner.successful?
-# exit(0)
-#else
-# exit(1)
-#end
+# It'd be nice if this worked, but it is apparently unreliable. See note above.
+if runner.successful?
+ exit(0)
+else
+ exit(1)
+end
