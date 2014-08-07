@@ -135,7 +135,7 @@ class Runner
   end
 
   def create_container
-    Rails.logger('Creating container')
+    Rails.logger.info('Creating container')
     conn = Docker::Connection.new(docker_url, read_timeout: 4.hours)
     container_params = {
       'name' => "#{@bot_name}_#{@run_uid}",
@@ -156,7 +156,7 @@ class Runner
   end
 
   def process_output
-    Rails.logger('Processing output')
+    Rails.logger.info('Processing output')
     handler = Handler.new(@bot_name, config, @run_id)
     runner = TurbotRunner::Runner.new(
       repo_path,
