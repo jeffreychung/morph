@@ -287,7 +287,7 @@ class Runner
   def output_path
     if Rails.env.production?
       File.join(
-        '/oc/openc/bot-outputs',
+        '/oc/openc/scrapers/output',
         @run_id == 'draft' ? 'draft' : 'non-draft',
         @bot_name[0],
         @bot_name,
