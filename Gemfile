@@ -63,6 +63,7 @@ gem 'hutch'
 gem 'rest-client'
 gem 'resque'
 gem 'turbot-api'
+gem 'turbot-runner', '0.1.3'
 
 # Required to keep capistrano happy
 gem 'net-ssh', '2.7.0'
