@@ -101,7 +101,7 @@ class Runner
         "#{local_root_path}/utils:/utils:ro"
       ]
 
-      if Rails.production?
+      if Rails.env.production?
         # In production, output_path is an absolute path
         binds << "#{output_path}:/output"
       else
