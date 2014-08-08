@@ -225,7 +225,12 @@ class Runner
     end
 
     num_records = 0
-    File.readlines(File.join(output_path, 'scraper.out')).each {|line| num_records += 1}
+
+    begin
+      File.readlines(File.join(output_path, 'scraper.out')).each {|line| num_records += 1}
+    rescue Errno::ENOENT
+    end
+
     metrics[:num_records] = num_records
 
     metrics
