@@ -18,39 +18,24 @@ class Runner
     @run_uid = run_uid
     @run_params = run_params
     @run_ended = false
-    @num_records = 0
-    @stdout_buffer = ''
   end
 
   def run
     set_up
+    status_code = run_in_container
 
-    status_code = run_in_container do |stream, chunk|
-      case stream
-      when :stdout
-        handle_stdout(chunk)
-      when :stderr
-        handle_stderr(chunk)
-      end
+    if status_code == 0
+      process_output
     end
 
-    metrics = read_metrics(File.join(data_path, 'time.out'))
-    output = read_output
-
-    # This is hopefully a temporary workaround to the problem of docker not
-    # reliably picking up the return code of a script that it runs.
-    if output.include?('Bot did not run to completion')
-      status_code = 1
-    else
-      status_code = 0
-    end
+    metrics = read_metrics
 
     if !config['incremental'] && !config['manually_end_run'] # the former is legacy
       @run_ended = true
       send_run_ended_to_angler
     end
 
-    report_run_ended(status_code, metrics, output)
+    report_run_ended(status_code, metrics)
   ensure
     clean_up
   end
@@ -58,17 +43,19 @@ class Runner
   def set_up
     connect_to_rabbitmq
     set_up_directory(data_path)
-    set_up_directory(metadata_path)
+    set_up_directory(output_path)
     synchronise_repo
     write_runtime_config
 
-    @stderr_file = File.open(stderr_out_path, 'wb')
+    @stdout_file = File.open(stdout_path, 'wb')
+    @stdout_file.sync = true
+    @stderr_file = File.open(stderr_path, 'wb')
+    @stderr_file.sync = true
   end
 
   def clean_up
-    if @stderr_file
-      @stderr_file.close unless @stderr_file.closed?
-    end
+    @stdout_file.close unless (@stdout_file && @stdout_file.closed?)
+    @stderr_file.close unless (@stderr_file && @stderr_file.closed?)
   end
 
   def connect_to_rabbitmq
@@ -113,14 +100,25 @@ class Runner
         "#{local_root_path}/#{data_path}:/data",
         "#{local_root_path}/utils:/utils:ro"
       ]
+
+      if Rails.env.production?
+        # In production, output_path is an absolute path
+        binds << "#{output_path}:/output"
+      else
+        binds << "#{local_root_path}/#{output_path}:/output"
+      end
+
       Rails.logger.info("Starting container with bindings: #{binds}")
       container.start('Binds' => binds)
 
-      container.attach(:logs => true) do |stream, chunk|
-        yield stream, chunk
+      container.attach do |stream, chunk|
+        case stream
+        when :stdout
+          @stdout_file.write(chunk)
+        when :stderr
+          @stderr_file.write(chunk)
+        end
       end
-
-      status_code = container.json['State']['ExitCode']
 
     rescue Exception => e
       Rails.logger.error("Hit error when running container: #{e}")
@@ -133,7 +131,8 @@ class Runner
       end
     ensure
       Rails.logger.info('Waiting for container to finish')
-      container.wait
+      response = container.wait
+      status_code = response['StatusCode']
       Rails.logger.info('Deleting container')
       container.delete
     end
@@ -143,6 +142,7 @@ class Runner
   end
 
   def create_container
+    Rails.logger.info('Creating container')
     conn = Docker::Connection.new(docker_url, read_timeout: 4.hours)
     container_params = {
       'name' => "#{@bot_name}_#{@run_uid}",
@@ -162,6 +162,17 @@ class Runner
     Docker::Container.create(container_params, conn)
   end
 
+  def process_output
+    Rails.logger.info('Processing output')
+    handler = Handler.new(@bot_name, config, @run_id)
+    runner = TurbotRunner::Runner.new(
+      repo_path,
+      :record_handler => handler,
+      :output_directory => output_path
+    )
+    runner.process_output
+  end
+
   def docker_url
     ENV["DOCKER_URL"] || Docker.default_socket_url
   end
@@ -171,7 +182,7 @@ class Runner
   end
 
   def command
-    "/usr/bin/time -v -o time.out ruby /utils/wrapper.rb #{@bot_name}"
+    '/usr/bin/time -v -o /output/time.out ruby /utils/wrapper.rb'
   end
 
   def image
@@ -188,58 +199,6 @@ class Runner
     end
   end
 
-  def handle_stdout(chunk)
-    lines = (@stdout_buffer + chunk).lines
-
-    if lines[-1].end_with?("\n")
-      @stdout_buffer = ''
-    else
-      @stdout_buffer = lines.pop
-    end
-
-    lines.each do |line|
-      handle_stdout_line(line)
-    end
-  end
-
-  def handle_stdout_line(line)
-    case line.strip
-    when 'NOT FOUND'
-      # TODO
-    when 'RUN ENDED'
-      @run_ended = true
-      send_run_ended_to_angler
-    else
-      data = JSON.parse(line.strip)
-      data_type = data.delete('data_type')
-      record = {
-        type: 'bot.record',
-        bot_name: @bot_name,
-        run_id: @run_id,
-        data: data,
-        export_date: Time.now.iso8601,
-        data_type: data_type,
-        identifying_fields: identifying_fields_for(data_type),
-      }
-      send_record_to_angler(record)
-    end
-  end
-
-  def identifying_fields_for(data_type)
-    if data_type == config['data_type']
-      config['identifying_fields']
-    else
-      transformers = config['transformers'].select {|transformer| transformer['data_type'] == data_type}
-      raise "Expected to find precisely 1 matching transformer matching #{data_type} in #{config}" unless transformers.size == 1
-      transformers[0]['identifying_fields']
-    end
-  end
-
-  def send_record_to_angler(record)
-    @num_records += 1
-    Hutch.publish('bot.record', record)
-  end
-
   def send_run_ended_to_angler
     message = {
       :type => 'run.ended',
@@ -249,14 +208,10 @@ class Runner
     Hutch.publish('bot.record', message)
   end
 
-  def handle_stderr(chunk)
-    @stderr_file.write(chunk)
-  end
-
-  def read_metrics(path)
+  def read_metrics
     metrics = {}
 
-    File.readlines(path).each do |line|
+    File.readlines(File.join(output_path, 'time.out')).each do |line|
       field, value = parse_metric_line(line)
       metrics[field] = value if value
     end
@@ -269,12 +224,11 @@ class Runner
       metrics[:maxrss] = metrics[:maxrss] * 1024 / metrics[:page_size]
     end
 
-    metrics
-  end
+    num_records = 0
+    File.readlines(File.join(output_path, 'scraper.out')).each {|line| num_records += 1}
+    metrics[:num_records] = num_records
 
-  def read_output
-    @stderr_file.close
-    output = File.read(stderr_out_path)
+    metrics
   end
 
   def parse_metric_line(line)
@@ -313,7 +267,7 @@ class Runner
     end
   end
 
-  def report_run_ended(status_code, metrics, output)
+  def report_run_ended(status_code, metrics)
     # TODO find the right place to put this
     host = ENV['TURBOT_HOST'] || 'http://turbot'
     url = "#{host}/api/runs/#{@run_uid}"
@@ -322,7 +276,6 @@ class Runner
       :api_key => ENV['TURBOT_API_KEY'],
       :status_code => status_code,
       :metrics => metrics,
-      :output => output,
       :run_ended => @run_ended
     }
 
@@ -342,15 +295,29 @@ class Runner
     File.join(BASE_PATH, 'data', @bot_name)
   end
 
-  def metadata_path
-    File.join(BASE_PATH, 'metadata', @bot_name)
+  def output_path
+    if Rails.env.production?
+      File.join(
+        '/oc/openc/scrapers/output',
+        @run_id == 'draft' ? 'draft' : 'non-draft',
+        @bot_name[0],
+        @bot_name,
+        @run_uid.to_s
+      )
+    else
+      File.join(BASE_PATH, 'output', @bot_name, @run_uid.to_s)
+    end
+  end
+
+  def stdout_path
+    File.join(output_path, 'stdout')
+  end
+
+  def stderr_path
+    File.join(output_path, 'stderr')
   end
 
   def git_url
     "git@#{GITLAB_DOMAIN}:#{GITLAB_GROUP}/#{@bot_name}.git"
-  end
-
-  def stderr_out_path
-    File.join(metadata_path, 'stderr.out')
   end
 end
