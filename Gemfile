@@ -62,6 +62,7 @@ gem 'git'
 gem 'hutch'
 gem 'rest-client'
 gem 'resque'
+gem 'resque-scheduler', '~> 3.0.0'
 gem 'turbot-api'
 
 # Required to keep capistrano happy

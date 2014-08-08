@@ -157,12 +157,12 @@ namespace :deploy do
 end
 
 namespace :resque do
-  desc "Stop the resque daemon"
+  desc "Stop the resque daemon and scheduler"
   task :stop do
     run "cd #{current_path} && RAILS_ENV=production bundle exec rake resque:stop_daemons; true"
   end
 
-  desc "Start the resque daemon"
+  desc "Start the resque daemon and scheduler"
   task :start do
     run "cd #{current_path} && RAILS_ENV=production bundle exec rake resque:start_daemons"
   end

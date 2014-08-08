@@ -1,5 +1,6 @@
 # Much of this was taken from http://www.slideshare.net/keenanbrock/resque-5509733
 require "resque/tasks"
+require 'resque/scheduler/tasks'
 
 task "resque:setup" => :environment do
   # generic worker setup, e.g. Hoptoad for failed jobs
@@ -54,6 +55,7 @@ namespace :resque do
       task_details = "resque_#{worker} resque:work_dont_fork QUEUE=#{config['queues']} #{config['cl_params']}"
       mrake_start task_details
     end
+    mrake_start "resque_scheduler resque:scheduler"
   end
 
   desc 'stop all background resque daemons'
@@ -68,6 +70,8 @@ namespace :resque do
     puts "Stopped all background resque daemons. Now clearing all restricted_performer locks..."
     Rake::Task["resque:clear_performer_locks"].invoke
     puts "Done."
+    sh "./script/monit_rake stop resque_scheduler -s QUIT"
+    puts "Stopped resque_scheduler"
   end
 
   desc 'start restricted resque daemons'
