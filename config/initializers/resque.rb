@@ -5,6 +5,6 @@ require 'resque/failure/redis'
 
 resque_config = YAML.load_file(Rails.root + 'config/resque.yml')[Rails.env].symbolize_keys
 Resque.redis = Redis.new(resque_config)
-
+Resque.redis.namespace = "resque:Turbot"
 Resque::Failure::Multiple.classes = [Resque::Failure::Redis, Resque::Failure::Airbrake]
 Resque::Failure.backend = Resque::Failure::Multiple
