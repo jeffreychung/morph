@@ -28,7 +28,7 @@ class Runner
       process_output
     end
 
-    metrics = read_metrics(File.join(output_path, 'time.out'))
+    metrics = read_metrics
 
     if !config['incremental'] && !config['manually_end_run'] # the former is legacy
       @run_ended = true
@@ -208,10 +208,10 @@ class Runner
     Hutch.publish('bot.record', message)
   end
 
-  def read_metrics(path)
+  def read_metrics
     metrics = {}
 
-    File.readlines(path).each do |line|
+    File.readlines(File.join(output_path, 'time.out')).each do |line|
       field, value = parse_metric_line(line)
       metrics[field] = value if value
     end
@@ -223,6 +223,10 @@ class Runner
       raise "Page size not known" unless metrics[:page_size]
       metrics[:maxrss] = metrics[:maxrss] * 1024 / metrics[:page_size]
     end
+
+    num_records = 0
+    File.readlines(File.join(output_path, 'scraper.out')).each {|line| num_records += 1}
+    metrics[:num_records] = num_records
 
     metrics
   end
