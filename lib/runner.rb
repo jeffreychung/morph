@@ -98,9 +98,16 @@ class Runner
       binds = [
         "#{local_root_path}/#{repo_path}:/repo:ro",
         "#{local_root_path}/#{data_path}:/data",
-        "#{local_root_path}/#{output_path}:/output",
         "#{local_root_path}/utils:/utils:ro"
       ]
+
+      if Rails.production?
+        # In production, output_path is an absolute path
+        binds << "#{output_path}:/output"
+      else
+        binds << "#{local_root_path}/#{output_path}:/output"
+      end
+
       Rails.logger.info("Starting container with bindings: #{binds}")
       container.start('Binds' => binds)
 
