@@ -17,8 +17,7 @@ class Handler < TurbotRunner::BaseHandler
       :identifying_fields => identifying_fields_for(data_type)
 
     }
-    puts "publishing: #{message}"
-#    Hutch.publish('bot.record', message)
+    Hutch.publish('bot.record', message)
   end
 
   def identifying_fields_for(data_type)
