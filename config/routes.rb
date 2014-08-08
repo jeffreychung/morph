@@ -1,4 +1,7 @@
 Morph::Application.routes.draw do
+  require 'resque/scheduler/server'
+  mount Resque::Server.new, :at => '/resque'
+
   post '/runs', :controller => 'runs', :action => 'run'
 
   ActiveAdmin.routes(self)
