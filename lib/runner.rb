@@ -47,6 +47,8 @@ class Runner
     synchronise_repo
     write_runtime_config
 
+    clear_saved_vars if @run_params[:run_type] == 'first'
+
     @stdout_file = File.open(stdout_path, 'wb')
     @stdout_file.sync = true
     @stderr_file = File.open(stderr_path, 'wb')
@@ -89,6 +91,10 @@ class Runner
     File.open(File.join(repo_path, 'runtime.json'), 'w') do |f|
       f.write(runtime_config.to_json)
     end
+  end
+
+  def clear_saved_vars
+    FileUtils.rm_f(File.join(data_path, '_vars.yml'))
   end
 
   def run_in_container
