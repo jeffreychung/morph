@@ -1,10 +1,10 @@
 require 'json'
 
-class DockerJob
-  @queue = :runs
+class TurbotDockerRunner
+  @queue = :turbot_docker_runs
 
   def self.perform(bot_name, run_id, run_uid, run_type)
-    runner = DockerJob.new(bot_name, run_id, run_uid, :run_type => run_type)
+    runner = TurbotDockerRunner.new(bot_name, run_id, run_uid, :run_type => run_type)
     runner.run
   end
 
