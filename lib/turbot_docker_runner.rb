@@ -1,10 +1,10 @@
 require 'json'
 
-class Runner
+class DockerJob
   @queue = :runs
 
   def self.perform(bot_name, run_id, run_uid, run_type)
-    runner = Runner.new(bot_name, run_id, run_uid, :run_type => run_type)
+    runner = DockerJob.new(bot_name, run_id, run_uid, :run_type => run_type)
     runner.run
   end
 
@@ -29,7 +29,6 @@ class Runner
     end
 
     metrics = read_metrics
-
     if !config['incremental'] && !config['manually_end_run'] # the former is legacy
       @run_ended = true
       send_run_ended_to_angler
@@ -171,6 +170,7 @@ class Runner
       :output_directory => output_path
     )
     runner.process_output
+    @run_ended = handler.ended
   end
 
   def docker_url

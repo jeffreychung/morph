@@ -1,6 +1,6 @@
 worker_1:
-  queues: 'runs'
+  queues: 'turbot_docker_runs'
 worker_2:
-  queues: 'runs'
+  queues: 'turbot_docker_runs'
 worker_3:
-  queues: 'runs'
+  queues: 'turbot_docker_runs'
