@@ -1,6 +1,8 @@
 require 'turbot_runner'
 
 class Handler < TurbotRunner::BaseHandler
+  attr_reader :ended
+
   def initialize(bot_name, config, run_id)
     @bot_name = bot_name
     @config = config
