@@ -5,6 +5,7 @@ class Handler < TurbotRunner::BaseHandler
     @bot_name = bot_name
     @config = config
     @run_id = run_id
+    @ended = false
   end
 
   def handle_valid_record(record, data_type)
@@ -18,6 +19,16 @@ class Handler < TurbotRunner::BaseHandler
 
     }
     Hutch.publish('bot.record', message)
+  end
+
+  def handle_run_ended
+    message = {
+      :type => 'run.ended',
+      :run_id => @run_id,
+      :bot_name => @bot_name
+    }
+    Hutch.publish('bot.record', message)
+    @ended = true
   end
 
   def identifying_fields_for(data_type)
