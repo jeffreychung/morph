@@ -49,13 +49,11 @@ namespace :resque do
 
   desc 'start all background resque daemons'
   task :start_daemons do
-    # mrake_start "resque_scheduler resque:scheduler"
     puts workers_config
     workers_config().each do |worker, config|
       task_details = "resque_#{worker} resque:work_dont_fork QUEUE=#{config['queues']} #{config['cl_params']}"
       mrake_start task_details
     end
-    mrake_start "resque_scheduler resque:scheduler"
   end
 
   desc 'stop all background resque daemons'
@@ -70,8 +68,6 @@ namespace :resque do
     puts "Stopped all background resque daemons. Now clearing all restricted_performer locks..."
     Rake::Task["resque:clear_performer_locks"].invoke
     puts "Done."
-    sh "./script/monit_rake stop resque_scheduler -s QUIT"
-    puts "Stopped resque_scheduler"
   end
 
   desc 'start restricted resque daemons'
