@@ -27,6 +27,12 @@ class Handler < TurbotRunner::BaseHandler
     errors.each {|error| STDERR.puts " * #{error}"}
     STDERR.puts
   end
+
+  def handle_invalid_json(line)
+    STDERR.puts
+    STDERR.puts "The following line is invalid JSON:"
+    STDERR.puts line
+  end
 end
 
 runner = TurbotRunner::Runner.new(
