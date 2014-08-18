@@ -55,8 +55,8 @@ class TurbotDockerRunner
   end
 
   def clean_up
-    @stdout_file.close unless (@stdout_file && @stdout_file.closed?)
-    @stderr_file.close unless (@stderr_file && @stderr_file.closed?)
+    @stdout_file.close if (@stdout_file && !@stdout_file.closed?)
+    @stderr_file.close if (@stderr_file && !@stderr_file.closed?)
   end
 
   def connect_to_rabbitmq
