@@ -18,6 +18,8 @@ class Handler < TurbotRunner::BaseHandler
     else
       @count += 1
     end
+
+    STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 1000 == 0
   end
 
   def handle_invalid_record(record, data_type, errors)
