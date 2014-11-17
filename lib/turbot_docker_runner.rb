@@ -24,11 +24,9 @@ class TurbotDockerRunner
     set_up
     status_code = run_in_container
 
-    if status_code == 0
-      process_output
-    end
-
+    process_output
     metrics = read_metrics
+
     if !config['incremental'] && !config['manually_end_run'] # the former is legacy
       @run_ended = true
       send_run_ended_to_angler
