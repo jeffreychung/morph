@@ -46,7 +46,7 @@ class TurbotDockerRunner
     synchronise_repo
     write_runtime_config
 
-    clear_saved_vars if @run_params[:run_type] == 'first'
+    clear_saved_vars if @run_params[:run_type] == 'first_of_scrape'
 
     @stdout_file = File.open(stdout_path, 'wb')
     @stdout_file.sync = true
