@@ -89,7 +89,6 @@ namespace :deploy do
     run "ln -sf #{shared_path}/config/sync.yml #{release_path}/config/sync.yml"
     run "ln -sf #{shared_path}/config/morph-dotenv #{release_path}/.env"
     run "mkdir -p #{release_path}/db/scrapers"
-    run "ln -sf /oc/openc/scrapers/data #{release_path}/db/scrapers/data"
   end
 
   desc "Updates secret_token.rb from SAN"

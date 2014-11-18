@@ -296,25 +296,32 @@ class TurbotDockerRunner
   end
 
   def repo_path
-    File.join(BASE_PATH, 'repo', @bot_name)
+    File.join(
+      base_path,
+      'repo',
+      @bot_name[0],
+      @bot_name
+    )
   end
 
   def data_path
-    File.join(BASE_PATH, 'data', @bot_name)
+    File.join(
+      base_path,
+      'data',
+      @bot_name[0],
+      @bot_name
+    )
   end
 
   def output_path
-    if Rails.env.production?
-      File.join(
-        '/oc/openc/scrapers/output',
-        @run_id == 'draft' ? 'draft' : 'non-draft',
-        @bot_name[0],
-        @bot_name,
-        @run_uid.to_s
-      )
-    else
-      File.join(BASE_PATH, 'output', @bot_name, @run_uid.to_s)
-    end
+    File.join(
+      base_path,
+      'output',
+      @run_id == 'draft' ? 'draft' : 'non-draft',
+      @bot_name[0],
+      @bot_name,
+      @run_uid.to_s
+    )
   end
 
   def stdout_path
@@ -327,5 +334,13 @@ class TurbotDockerRunner
 
   def git_url
     "git@#{GITLAB_DOMAIN}:#{GITLAB_GROUP}/#{@bot_name}.git"
+  end
+
+  def base_path
+    if Rails.env.production?
+      '/oc/openc/scrapers'
+    else
+      'db/scrapers'
+    end
   end
 end
