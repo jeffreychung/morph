@@ -14,7 +14,7 @@ class Handler < TurbotRunner::BaseHandler
     message = {
       :type => 'bot.record',
       :bot_name => @bot_name,
-      :run_id => @run_id,
+      :snapshot_id => @run_id,
       :data => record,
       :data_type => data_type,
       :identifying_fields => identifying_fields_for(data_type)
@@ -26,7 +26,7 @@ class Handler < TurbotRunner::BaseHandler
   def handle_run_ended
     message = {
       :type => 'run.ended',
-      :run_id => @run_id,
+      :snapshot_id => @run_id,
       :bot_name => @bot_name
     }
     Hutch.publish('bot.record', message)

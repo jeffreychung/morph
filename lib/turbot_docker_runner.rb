@@ -206,7 +206,7 @@ class TurbotDockerRunner
     message = {
       :type => 'run.ended',
       :bot_name => @bot_name,
-      :run_id => @run_id
+      :snapshot_id => @run_id
     }
     Hutch.publish('bot.record', message)
   end
