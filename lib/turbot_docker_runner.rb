@@ -33,6 +33,10 @@ class TurbotDockerRunner
     end
 
     report_run_ended(status_code, metrics)
+  rescue Exception => e
+    log_exception_and_notify_airbrake(e)
+
+    report_run_ended(-1, {:exception => e.exception, :backtrace => e.backtrace})
   ensure
     clean_up
   end
@@ -118,9 +122,7 @@ class TurbotDockerRunner
       end
 
     rescue Exception => e
-      Rails.logger.error("Hit error when running container: #{e}")
-      e.backtrace.each { |line| Rails.logger.error(line) }
-      Airbrake.notify(e)
+      log_exception_and_notify_airbrake(e)
       begin
         container.kill
       rescue Excon::Errors::SocketError => e
@@ -336,5 +338,11 @@ class TurbotDockerRunner
     else
       'db/scrapers'
     end
+  end
+
+  def log_exception_and_notify_airbrake(e)
+    Rails.logger.error("Hit error when running container: #{e}")
+    e.backtrace.each { |line| Rails.logger.error(line) }
+    Airbrake.notify(e)
   end
 end
