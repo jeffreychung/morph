@@ -3,22 +3,27 @@ require 'json'
 class TurbotDockerRunner
   @queue = :turbot_docker_runs
 
-  def self.perform(bot_name, run_id, run_uid, run_type, user_api_key)
-    runner = TurbotDockerRunner.new(bot_name, run_id, run_uid, run_type, user_api_key)
+  def self.perform(params)
+    runner = TurbotDockerRunner.new(params)
     runner.run
   end
 
-  def initialize(bot_name, run_id, run_uid, run_type, user_api_key)
-    @bot_name = bot_name
+  def initialize(params)
+    params = params.with_indifferent_access
 
-    if run_id == 'draft'
+    @params = params  # Keep hold of this for error reporting
+
+    @bot_name = params[:bot_name]
+
+    if params[:run_id] == 'draft'
       @run_id = 'draft'
     else
-      @run_id = run_id.to_i
+      @run_id = params[:run_id].to_i
     end
-    @run_uid = run_uid
-    @run_type = run_type
-    @user_api_key = user_api_key
+
+    @run_uid = params[:run_uid]
+    @run_type = params[:run_type]
+    @user_api_key = params[:user_api_key]
 
     @run_ended = false
   end
@@ -355,6 +360,6 @@ class TurbotDockerRunner
   def log_exception_and_notify_airbrake(e)
     Rails.logger.error("Hit error when running container: #{e}")
     e.backtrace.each { |line| Rails.logger.error(line) }
-    Airbrake.notify(e)
+    Airbrake.notify(e, :parameters => @params)
   end
 end
