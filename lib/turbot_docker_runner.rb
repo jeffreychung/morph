@@ -42,7 +42,7 @@ class TurbotDockerRunner
   rescue Exception => e
     log_exception_and_notify_airbrake(e)
 
-    report_run_ended(-1, {:exception => e.exception, :backtrace => e.backtrace})
+    report_run_ended(-1, {:class => e.class, :message => e.message, :backtrace => e.backtrace})
   ensure
     clean_up
   end
