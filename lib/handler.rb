@@ -18,8 +18,12 @@ class Handler < TurbotRunner::BaseHandler
       :data => record,
       :data_type => data_type,
       :identifying_fields => identifying_fields_for(data_type)
-
     }
+
+    if data_type == 'primary data'
+      message[:company_fields] = @config.fetch('company_fields')  # will raise exception if missing from config
+    end
+
     Hutch.publish('bot.record', message)
   end
 
