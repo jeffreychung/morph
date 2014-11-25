@@ -3,20 +3,23 @@ require 'json'
 class TurbotDockerRunner
   @queue = :turbot_docker_runs
 
-  def self.perform(bot_name, run_id, run_uid, run_type)
-    runner = TurbotDockerRunner.new(bot_name, run_id, run_uid, :run_type => run_type)
+  def self.perform(bot_name, run_id, run_uid, run_type, user_api_key)
+    runner = TurbotDockerRunner.new(bot_name, run_id, run_uid, run_type, user_api_key)
     runner.run
   end
 
-  def initialize(bot_name, run_id, run_uid, run_params={})
+  def initialize(bot_name, run_id, run_uid, run_type, user_api_key)
     @bot_name = bot_name
+
     if run_id == 'draft'
       @run_id = 'draft'
     else
       @run_id = run_id.to_i
     end
     @run_uid = run_uid
-    @run_params = run_params
+    @run_type = run_type
+    @user_api_key = user_api_key
+
     @run_ended = false
   end
 
@@ -25,6 +28,9 @@ class TurbotDockerRunner
     status_code = run_in_container
 
     process_output
+
+    symlink_output
+
     metrics = read_metrics
 
     if !config['incremental'] && !config['manually_end_run'] # the former is legacy
@@ -45,10 +51,10 @@ class TurbotDockerRunner
     connect_to_rabbitmq
     set_up_directory(data_path)
     set_up_directory(output_path)
+    set_up_directory(downloads_path)
     synchronise_repo
-    write_runtime_config
 
-    clear_saved_vars if @run_params[:run_type] == 'first_of_scrape'
+    clear_saved_vars if @run_type == 'first_of_scrape'
 
     @stdout_file = File.open(stdout_path, 'wb')
     @stdout_file.sync = true
@@ -80,17 +86,6 @@ class TurbotDockerRunner
     else
       Rails.logger.info("Cloning #{git_url} into #{repo_path}")
       Git.clone(git_url, repo_path)
-    end
-  end
-
-  def write_runtime_config
-    runtime_config = {
-      :name => @bot_name,
-      :run_params => @run_params,
-    }
-
-    File.open(File.join(repo_path, 'runtime.json'), 'w') do |f|
-      f.write(runtime_config.to_json)
     end
   end
 
@@ -154,7 +149,7 @@ class TurbotDockerRunner
       'Memory' => 2.gigabytes,
       # MORPH_URL is used by Turbotlib to determine whether a scraper is
       # running in production.
-      'Env' => ["RUN_TYPE=#{@run_params[:run_type]}", "MORPH_URL=#{ENV['MORPH_URL']}"],
+      'Env' => ["RUN_TYPE=#{@run_type}", "MORPH_URL=#{ENV['MORPH_URL']}"],
     }
     Rails.logger.info("Creating container with params #{container_params}")
     Docker::Container.create(container_params, conn)
@@ -170,6 +165,13 @@ class TurbotDockerRunner
     )
     runner.process_output
     @run_ended = handler.ended
+  end
+
+  def symlink_output
+    File.symlink(
+      File.join(output_path, 'scraper.out'),
+      File.join(downloads_path, @user_api_key)
+    )
   end
 
   def docker_url
@@ -314,6 +316,16 @@ class TurbotDockerRunner
       base_path,
       'output',
       @run_id == 'draft' ? 'draft' : 'non-draft',
+      @bot_name[0],
+      @bot_name,
+      @run_uid.to_s
+    )
+  end
+
+  def downloads_path
+    File.join(
+      base_path,
+      'downloads',
       @bot_name[0],
       @bot_name,
       @run_uid.to_s
