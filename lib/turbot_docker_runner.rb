@@ -175,7 +175,7 @@ class TurbotDockerRunner
   def symlink_output
     File.symlink(
       File.join(output_path, 'scraper.out'),
-      File.join(downloads_path, "#{bot.bot_id}-#{id}.out")
+      File.join(downloads_path, "#{@bot_name}-#{@run_uid}.out")
     )
   end
 
