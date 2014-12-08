@@ -4,3 +4,17 @@ worker_2:
   queues: 'turbot_docker_runs'
 worker_3:
   queues: 'turbot_docker_runs'
+worker_4:
+  queues: 'turbot_docker_runs'
+worker_5:
+  queues: 'turbot_docker_runs'
+worker_6:
+  queues: 'turbot_docker_runs'
+worker_7:
+  queues: 'turbot_docker_runs'
+worker_8:
+  queues: 'turbot_docker_runs'
+worker_9:
+  queues: 'turbot_docker_runs'
+worker_10:
+  queues: 'turbot_docker_runs'
