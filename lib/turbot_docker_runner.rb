@@ -148,10 +148,9 @@ class TurbotDockerRunner
       'Cmd' => ['/bin/bash', '-l', '-c', command],
       'User' => 'scraper',
       'Image' => image,
-      # See explanation in https://github.com/openaustralia/morph/issues/242
-      'CpuShares' => 307,
-      # We have 8GB to divide between 3 processes.
-      'Memory' => 2.gigabytes,
+      # We have 8GB to divide between 10 processes, but there's scope for
+      # swapping and most processes won't need that much memory.
+      'Memory' => 1.gigabyte,
       # MORPH_URL is used by Turbotlib to determine whether a scraper is
       # running in production.
       'Env' => ["RUN_TYPE=#{@run_type}", "MORPH_URL=#{ENV['MORPH_URL']}"],
