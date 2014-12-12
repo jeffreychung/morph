@@ -88,13 +88,13 @@ class TurbotDockerRunner
     if Dir.exists?(repo_path)
       Rails.logger.info("Pulling into #{repo_path}")
       Git.open(repo_path).pull
+    else
+      Rails.logger.info("Cloning #{git_url} into #{repo_path}")
+      Git.clone(git_url, repo_path)
 
       # Bots using OpencBot's incrementors expect to be able to write to /repo/db.
       # This could be removed if OpencBot is made smarter.
       File.symlink(data_path, File.join(repo_path, 'db'))
-    else
-      Rails.logger.info("Cloning #{git_url} into #{repo_path}")
-      Git.clone(git_url, repo_path)
     end
   end
 
