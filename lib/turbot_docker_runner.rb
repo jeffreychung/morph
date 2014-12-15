@@ -220,9 +220,13 @@ class TurbotDockerRunner
   def read_metrics
     metrics = {}
 
-    File.readlines(File.join(output_path, 'time.out')).each do |line|
-      field, value = parse_metric_line(line)
-      metrics[field] = value if value
+    begin
+      File.readlines(File.join(output_path, 'time.out')).each do |line|
+        field, value = parse_metric_line(line)
+        metrics[field] = value if value
+      end
+    rescue Errno::ENOENT
+      # sometimes time.out doesn't get produced
     end
 
     # There's a bug in GNU time 1.7 which wrongly reports the maximum resident
