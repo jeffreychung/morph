@@ -85,12 +85,24 @@ class TurbotDockerRunner
   end
 
   def synchronise_repo
+    tries = 3
+
     if Dir.exists?(repo_path)
-      Rails.logger.info("Pulling into #{repo_path}")
-      Git.open(repo_path).pull
+      begin
+        Rails.logger.info("Pulling into #{repo_path}")
+        Git.open(repo_path).pull
+      rescue Git::GitExecuteError
+        Rails.logger.info('Hit GitExecuteError')
+        retry unless (tries -= 1).zero?
+      end
     else
-      Rails.logger.info("Cloning #{git_url} into #{repo_path}")
-      Git.clone(git_url, repo_path)
+      begin
+        Rails.logger.info("Cloning #{git_url} into #{repo_path}")
+        Git.clone(git_url, repo_path)
+      rescue Git::GitExecuteError
+        Rails.logger.info('Hit GitExecuteError')
+        retry unless (tries -= 1).zero?
+      end
 
       # Bots using OpencBot's incrementors expect to be able to write to /repo/db.
       # This could be removed if OpencBot is made smarter.
