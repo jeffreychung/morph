@@ -13,13 +13,15 @@ class Handler < TurbotRunner::BaseHandler
   end
 
   def handle_valid_record(record, data_type)
-    if ENV['RUN_TYPE'] == "draft" && @count > MAX_DRAFT_ROWS
-      raise TurbotRunner::InterruptRun
-    else
-      @count += 1
-    end
+    if data_type == 'primary data'
+      if ENV['RUN_TYPE'] == "draft" && @count > MAX_DRAFT_ROWS
+        raise TurbotRunner::InterruptRun
+      else
+        @count += 1
+      end
 
-    STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 1000 == 0
+      STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 1000 == 0
+    end
   end
 
   def handle_invalid_record(record, data_type, errors)
