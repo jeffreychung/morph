@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
 gem 'dotenv-rails'
-gem 'byebug'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.3'
 
@@ -64,7 +63,7 @@ gem 'rest-client'
 gem 'resque'
 gem 'resque-scheduler', '~> 3.0.0'
 gem 'turbot-api', '0.0.14'
-gem 'turbot-runner', '0.1.18'
+gem 'turbot-runner', '0.1.20'
 
 # Required to keep capistrano happy
 gem 'net-ssh', '2.7.0'
