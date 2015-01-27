@@ -91,9 +91,6 @@ GEM
     builder (3.1.4)
     bunny (1.2.2)
       amq-protocol (>= 1.9.2)
-    byebug (2.7.0)
-      columnize (~> 0.3)
-      debugger-linecache (~> 1.2)
     capistrano (2.13.5)
       highline
       net-scp (>= 1.0.0)
@@ -112,7 +109,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.6.3)
-    columnize (0.3.6)
     connection_pool (1.2.0)
     cookiejar (0.3.1)
     crack (0.4.2)
@@ -122,7 +118,6 @@ GEM
     dalli (2.7.0)
     database_cleaner (1.2.0)
     debug_inspector (0.0.2)
-    debugger-linecache (1.2.0)
     devise (3.2.2)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -437,8 +432,8 @@ GEM
     turbot-api (0.0.14)
       rest-client (~> 1.6.1)
       rubyzip
-    turbot-runner (0.1.20)
-      json-schema (~> 2.4)
+    turbot-runner (0.1.21)
+      json-schema (= 2.5.0)
     tzinfo (0.3.38)
     uglifier (2.4.0)
       execjs (>= 0.3.0)
@@ -465,7 +460,6 @@ DEPENDENCIES
   archive-tar-minitar
   better_errors
   binding_of_caller
-  byebug
   capistrano (= 2.13.5)
   coffee-rails (~> 4.0.0)
   dalli
@@ -524,7 +518,7 @@ DEPENDENCIES
   sitemap_generator
   sync
   turbot-api (= 0.0.14)
-  turbot-runner (= 0.1.20)
+  turbot-runner (= 0.1.21)
   twitter-bootstrap-rails!
   uglifier (>= 1.3.0)
   vcr
