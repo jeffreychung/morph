@@ -24,11 +24,11 @@ class Handler < TurbotRunner::BaseHandler
     end
   end
 
-  def handle_invalid_record(record, data_type, errors)
+  def handle_invalid_record(record, data_type, error_message)
     STDERR.puts
     STDERR.puts "The following record is invalid:"
     STDERR.puts record.to_json
-    errors.each {|error| STDERR.puts " * #{error}"}
+    STDERR.puts " * #{error_message}"
     STDERR.puts
   end
 
