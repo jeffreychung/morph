@@ -1,4 +1,5 @@
 require 'json'
+require 'zip'
 
 class TurbotDockerRunner
   @queue = :turbot_docker_runs
