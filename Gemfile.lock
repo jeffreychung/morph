@@ -509,6 +509,7 @@ DEPENDENCIES
   resque-scheduler (~> 3.0.0)
   rest-client
   rspec-rails (~> 2.0)
+  rubyzip
   rvm-capistrano (= 1.4.1)
   sass-rails (~> 4.0.0)
   sdoc

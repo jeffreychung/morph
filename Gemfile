@@ -10,7 +10,7 @@ gem 'rails', '4.0.3'
 # switch back over to the normal sqlite3 gem
 gem 'openaustralia-sqlite3', require: "sqlite3"
 gem 'mysql2'
-
+gem 'rubyzip'
 gem "haml-rails"
 gem "twitter-bootstrap-rails", git: "https://github.com/seyhunak/twitter-bootstrap-rails.git", branch: "bootstrap3"
 gem "devise"
