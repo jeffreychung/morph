@@ -34,7 +34,7 @@ class TurbotDockerRunner
 
     process_output
 
-    symlink_output
+    zip_and_symlink_output
 
     metrics = read_metrics
 
@@ -187,10 +187,19 @@ class TurbotDockerRunner
     @run_ended = handler.ended
   end
 
-  def symlink_output
+  def zip_and_symlink_output
+    input_filenames = ["scraper.out"]
+    input_filenames += config['transformers'] && config['transformers'].map{|t|t['file']} || []
+    zipfile_name = "#{@bot_name}-#{@run_uid}.zip"
+    zipfile_path = File.join(output_path, zipfile_name)
+    Zip::File.open(zipfile_path, Zip::File::CREATE) do |zipfile|
+      input_filenames.each do |filename|
+        zipfile.add(filename, File.join(output_path, filename))
+      end
+    end
     File.symlink(
-      File.join(output_path, 'scraper.out'),
-      File.join(downloads_path, "#{@bot_name}-#{@run_uid}.out")
+      zipfile_path,
+      File.join(downloads_path, zipfile_name)
     )
   end
 
