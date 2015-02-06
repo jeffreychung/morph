@@ -198,6 +198,7 @@ class TurbotDockerRunner
         zipfile.add(filename, File.join(output_path, filename))
       end
     end
+    FileUtils.chmod(0755, zipfile_path)
     File.symlink(
       zipfile_path,
       File.join(downloads_path, zipfile_name)
