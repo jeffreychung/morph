@@ -189,12 +189,10 @@ class TurbotDockerRunner
   end
 
   def zip_and_symlink_output
-    input_filenames = ["scraper.out"]
-    input_filenames += config['transformers'] && config['transformers'].map{|t|t['file']} || []
     zipfile_name = "#{@bot_name}-#{@run_uid}.zip"
     zipfile_path = File.join(output_path, zipfile_name)
     Zip::File.open(zipfile_path, Zip::File::CREATE) do |zipfile|
-      input_filenames.each do |filename|
+      script_output_filenames.each do |filename|
         zipfile.add(filename, File.join(output_path, filename))
       end
     end
@@ -229,6 +227,22 @@ class TurbotDockerRunner
     else
       raise "Could not find scraper at #{repo_path}"
     end
+  end
+
+  def script_output_filenames
+    filenames = ["scraper.out"]
+    (config['transformers'] || []).each do |transformer_config|
+      transformer_file = transformer_config['file']
+      basename = File.basename(transformer_file, script_extension)
+      filenames << "#{basename}.out"
+    end
+  end
+
+  def script_extension
+    {
+      'ruby' => '.rb',
+      'python' => '.py',
+    }[language]
   end
 
   def send_run_ended_to_angler
