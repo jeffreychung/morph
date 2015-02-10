@@ -230,7 +230,7 @@ class TurbotDockerRunner
   end
 
   def script_output_filenames
-    filenames = []
+    filenames = ["scraper.out"]
     (config['transformers'] || []).each do |transformer_config|
       transformer_file = transformer_config['file']
       basename = File.basename(transformer_file, script_extension)
