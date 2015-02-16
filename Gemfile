@@ -63,7 +63,8 @@ gem 'rest-client'
 gem 'resque'
 gem 'resque-scheduler', '~> 3.0.0'
 gem 'turbot-api', '0.0.14'
-gem 'turbot-runner', '0.1.23'
+gem 'turbot-runner', '0.1.24'
+gem 'json-schema', :git => 'git://github.com/ruby-json-schema/json-schema.git', :ref => 'aded4d798a48545184dae7ae0a3bb41ec2794c88'
 
 # Required to keep capistrano happy
 gem 'net-ssh', '2.7.0'
