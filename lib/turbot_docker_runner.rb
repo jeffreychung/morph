@@ -32,6 +32,7 @@ class TurbotDockerRunner
   def run
     set_up
     if @run_type == 'prescraped'
+      copy_prescraped_data_to_run if @run_type == "prescrape"
       status_code = 0
     else
       status_code = run_in_container
@@ -63,8 +64,6 @@ class TurbotDockerRunner
     set_up_directory(output_path)
     set_up_directory(downloads_path)
     synchronise_repo
-    copy_prescraped_data_to_run if @run_type == "prescrape"
-
     clear_saved_vars if @run_type == 'first_of_scrape'
 
     @stdout_file = File.open(stdout_path, 'wb')
