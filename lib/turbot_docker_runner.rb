@@ -32,7 +32,7 @@ class TurbotDockerRunner
   def run
     set_up
     if @run_type == 'prescrape'
-      copy_prescraped_data_to_run if @run_type == "prescrape"
+      copy_prescraped_data_to_run
       status_code = 0
     else
       status_code = run_in_container
