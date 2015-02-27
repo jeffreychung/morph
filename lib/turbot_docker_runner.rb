@@ -31,7 +31,7 @@ class TurbotDockerRunner
 
   def run
     set_up
-    if @run_type == 'prescraped'
+    if @run_type == 'prescrape'
       copy_prescraped_data_to_run if @run_type == "prescrape"
       status_code = 0
     else
