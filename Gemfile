@@ -63,7 +63,7 @@ gem 'rest-client'
 gem 'resque'
 gem 'resque-scheduler', '~> 3.0.0'
 gem 'turbot-api', '0.0.14'
-gem 'turbot-runner', '0.1.34'
+gem 'turbot-runner', '0.1.35'
 
 # Required to keep capistrano happy
 gem 'net-ssh', '2.7.0'
