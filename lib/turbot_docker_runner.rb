@@ -90,7 +90,7 @@ class TurbotDockerRunner
   end
 
   def copy_prescraped_data_to_run
-    Dir.glob(File.join(prescraped_path, 'output', 'data', '*.out')).each do |file|
+    Dir.glob(File.join(prescraped_path, 'output', '*.out')).each do |file|
       FileUtils.cp(file, output_path)
     end
   end
