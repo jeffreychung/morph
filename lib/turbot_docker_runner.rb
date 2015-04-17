@@ -37,7 +37,8 @@ class TurbotDockerRunner
       status_code = run_in_container
     end
 
-    process_output
+    # TODO remove this restriction once SEC data is migrated.
+    process_output unless @bot_name == 'sec_subsidiaries'
 
     zip_and_symlink_output
 
