@@ -63,7 +63,7 @@ class TurbotDockerRunner
     set_up_directory(output_path)
     set_up_directory(downloads_path)
     synchronise_repo
-    clear_saved_vars if @run_type == 'first_of_scrape'
+    clear_saved_vars if @run_type == 'new_snapshot'
 
     @stdout_file = File.open(stdout_path, 'wb')
     @stdout_file.sync = true
