@@ -32,7 +32,6 @@ class TurbotDockerRunner
   def run
     set_up
     if @run_type == 'prescrape'
-      copy_prescraped_data_to_run
       status_code = 0
     else
       status_code = run_in_container
@@ -87,12 +86,6 @@ class TurbotDockerRunner
     Rails.logger.info("Setting up #{path}")
     FileUtils.mkdir_p(path)
     FileUtils.chmod(0777, path)
-  end
-
-  def copy_prescraped_data_to_run
-    Dir.glob(File.join(prescraped_path, 'output', '*.out')).each do |file|
-      FileUtils.cp(file, output_path)
-    end
   end
 
   def synchronise_repo
@@ -358,13 +351,6 @@ class TurbotDockerRunner
       base_path,
       'repo',
       @bot_name[0],
-      @bot_name
-    )
-  end
-
-  def prescraped_path
-    File.join(
-      PRESCRAPED_BOT_DIR,
       @bot_name
     )
   end
