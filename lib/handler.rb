@@ -23,10 +23,11 @@ class Handler < TurbotRunner::BaseHandler
     }
     Hutch.publish('bot.record', message)
     sleep @sleep
-    counter += 1
+    @counter += 1
 
-    if counter == 1000
-      counter = 0
+    if @counter > 60 / @sleep
+      # Recompute sleep every minute or so
+      @counter = 0
 
       begin
         producer_data = JSON.parse(RestClient.get('http://guest:guest@rabbit1:55672/api/exchanges/%2F/hutch'))
