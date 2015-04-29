@@ -60,6 +60,7 @@ class TurbotDockerRunner
 
   def set_up
     connect_to_rabbitmq
+    set_up_directory(tmp_path)
     set_up_directory(data_path)
     set_up_directory(output_path)
     set_up_directory(downloads_path)
@@ -125,6 +126,7 @@ class TurbotDockerRunner
     begin
       binds = [
         "#{repo_path}:/repo:ro",
+        "#{tmp_path}:/tmp",
         "#{data_path}:/data",
         "#{local_root_path}/utils:/utils:ro",
         "#{output_path}:/output"
@@ -353,6 +355,16 @@ class TurbotDockerRunner
       'repo',
       @bot_name[0],
       @bot_name
+    )
+  end
+
+  def tmp_path
+    File.join(
+      base_path,
+      'tmp',
+      @bot_name[0],
+      @bot_name,
+      @run_uid.to_s
     )
   end
 
