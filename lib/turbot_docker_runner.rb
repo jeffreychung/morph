@@ -189,7 +189,7 @@ class TurbotDockerRunner
       repo_path,
       :record_handler => handler,
       :output_directory => output_path,
-      :timeout => 60 * 60 * 6
+      :timeout => 24 * 60 * 6
     )
     runner.process_output
     @run_ended = handler.ended

@@ -38,7 +38,7 @@ class Handler < TurbotRunner::BaseHandler
         consumption_rate = bot_record_consumer_data['backing_queue_status']['avg_egress_rate']
 
         production_rate = consumption_rate / num_producers
-        @sleep = 1.0 / production_rate
+        @sleep = [1.0 / production_rate, 60].min
         puts "New sleep: #{@sleep}"
       rescue Exception => e
         Rails.logger.warn("Hit exception when calculating sleep: #{e}")
