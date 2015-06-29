@@ -8,7 +8,6 @@ class Handler < TurbotRunner::BaseHandler
     @config = config
     @run_id = run_id
     @ended = false
-    @sleep = 1.0 / 40
     @counter = 0
   end
 
@@ -22,27 +21,36 @@ class Handler < TurbotRunner::BaseHandler
       :identifying_fields => identifying_fields_for(data_type)
     }
     Hutch.publish('bot.record', message)
-    sleep @sleep
     @counter += 1
 
-    if @counter > 60 / @sleep
-      # Recompute sleep every minute or so
-      @counter = 0
+    if @counter > 1000
+      # Every 1000 records, check to see whether the bot_record_consumer queue
+      # has grown above a threshold.  If the queue is too big, we sleep for a
+      # random amount of time, before checking again.  There may be several
+      # other producers, so we want to sleep for a random amount of time so
+      # that when the queue size drops below the threshold, each producer gets
+      # a chance at being able to continue producing.
+      while True
+        begin
+          tries ||= 3
+          consumer_data = JSON.parse(RestClient.get('http://guest:guest@rabbit1:55672/api/queues'))
+          num_messages = consumer_data.detect {|d| d['name'] == 'bot_record_consumer'}['messages']
+          Rails.logger.info("There are #{num_messages} on the queue")
+        rescue => e
+          if (tries -= 1) > 0
+            Rails.logger.warn("Hit exception when querying rabbitmq: #{e}")
+            sleep 10
+            retry
+          else
+            raise
+          end
+        end
 
-      begin
-        producer_data = JSON.parse(RestClient.get('http://guest:guest@rabbit1:55672/api/exchanges/%2F/hutch'))
-        num_producers = producer_data['incoming'].map {|d| d['stats']['publish_details']}.compact.count{|d| d['rate'] != 0}
-
-        consumer_data = JSON.parse(RestClient.get('http://guest:guest@rabbit1:55672/api/queues'))
-        bot_record_consumer_data = consumer_data.detect {|d| d['name'] == 'bot_record_consumer'}
-        consumption_rate = bot_record_consumer_data['backing_queue_status']['avg_egress_rate']
-
-        production_rate = consumption_rate / num_producers
-        @sleep = [1.0 / production_rate, 60].min
-        puts "New sleep: #{@sleep}"
-      rescue Exception => e
-        Rails.logger.warn("Hit exception when calculating sleep: #{e}")
+        break if num_messages < 10_000
+        sleep Random.rand(10..60)
       end
+
+      @counter = 0
     end
   end
 
