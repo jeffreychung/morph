@@ -9,16 +9,16 @@ MAX_DRAFT_ROWS = 2000
 class Handler < TurbotRunner::BaseHandler
   def initialize
     super
-    @count = 0
+    @counts = Hash.new(0)
   end
 
   def handle_valid_record(record, data_type)
-    if ENV['RUN_TYPE'] == "draft" && @count > MAX_DRAFT_ROWS
+    if ENV['RUN_TYPE'] == "draft" && @counts[data_type] > MAX_DRAFT_ROWS
       raise TurbotRunner::InterruptRun
     else
-      @count += 1
+      @counts[data_type] += 1
     end
-    STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 1000 == 0
+    STDOUT.puts "#{Time.now} :: Handled #{@counts[data_type]} records" if @counts[data_type] % 1000 == 0
   end
 
   def handle_invalid_record(record, data_type, error_message)
