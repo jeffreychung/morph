@@ -259,7 +259,8 @@ class TurbotDockerRunner
       :bot_name => @bot_name,
       :snapshot_id => @run_id
     }
-    Hutch.publish('bot.record', message)
+    routing_key = @run_id == 'draft' ? 'bot.record.draft' : 'bot.record.non-draft'
+    Hutch.publish(routing_key, message)
   end
 
   def read_metrics

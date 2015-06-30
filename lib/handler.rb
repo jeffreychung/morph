@@ -20,7 +20,7 @@ class Handler < TurbotRunner::BaseHandler
       :data_type => data_type,
       :identifying_fields => identifying_fields_for(data_type)
     }
-    Hutch.publish('bot.record', message)
+    Hutch.publish(routing_key, message)
     @counter += 1
 
     if @counter > 1000
@@ -60,7 +60,7 @@ class Handler < TurbotRunner::BaseHandler
       :snapshot_id => @run_id,
       :bot_name => @bot_name
     }
-    Hutch.publish('bot.record', message)
+    Hutch.publish(routing_key, message)
     @ended = true
   end
 
@@ -72,5 +72,9 @@ class Handler < TurbotRunner::BaseHandler
       raise "Expected to find precisely 1 matching transformer matching #{data_type} in #{@config}" unless transformers.size == 1
       transformers[0]['identifying_fields']
     end
+  end
+
+  def routing_key
+    @run_id == 'draft' ? 'bot.record.draft' : 'bot.record.non-draft'
   end
 end
