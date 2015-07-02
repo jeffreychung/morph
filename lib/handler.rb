@@ -30,7 +30,7 @@ class Handler < TurbotRunner::BaseHandler
       # other producers, so we want to sleep for a random amount of time so
       # that when the queue size drops below the threshold, each producer gets
       # a chance at being able to continue producing.
-      while True
+      while true
         begin
           tries ||= 3
           consumer_data = JSON.parse(RestClient.get('http://guest:guest@rabbit1:55672/api/queues'))
