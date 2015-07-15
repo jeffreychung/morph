@@ -2,6 +2,10 @@
 require "resque/tasks"
 require 'resque/scheduler/tasks'
 
+def log(msg)
+  puts "#{Process.pid} :: #{Time.now} :: #{msg}"
+end
+
 task "resque:setup" => :environment do
   # generic worker setup, e.g. Hoptoad for failed jobs
 end
@@ -10,9 +14,12 @@ namespace :resque do
 
   desc "Start a Resque worker without forking"
   task :work_dont_fork => [ :preload, :setup ] do
+    log("*" * 80)
+    log("Running rake task resque:work_dont_fork")
     require 'resque'
 
     queues = (ENV['QUEUES'] || ENV['QUEUE']).to_s.split(',')
+    log("queues: #{queues}")
 
     begin
       worker = Resque::Worker.new(*queues)
@@ -43,7 +50,10 @@ namespace :resque do
 
     worker.log "Starting worker #{worker}"
 
-    worker.work(ENV['INTERVAL'] || 5) # interval, will block
+    log("Starting worker")
+    rc = worker.work(ENV['INTERVAL'] || 5) # interval, will block
+    log("Worker has completed, returning: #{rc}")
+    rc
   end
 
 
