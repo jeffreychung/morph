@@ -163,7 +163,7 @@ namespace :resque do
 
   desc "Start the resque daemon and scheduler"
   task :start do
-    run "cd #{current_path} && RAILS_ENV=production bundle exec rake resque:start_daemons"
+    run "cd #{current_path} && VVERBOSE=yes RAILS_ENV=production bundle exec rake resque:start_daemons"
   end
 
   desc "Restart the resque daemon and scheduler"
