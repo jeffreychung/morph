@@ -200,7 +200,12 @@ class TurbotDockerRunner
     zipfile_path = File.join(output_path, zipfile_name)
     Zip::File.open(zipfile_path, Zip::File::CREATE) do |zipfile|
       script_output_filenames.each do |filename|
-        zipfile.add(filename, File.join(output_path, filename))
+        begin
+          zipfile.add(filename, File.join(output_path, filename))
+        rescue Errno::ENOENT
+          # An output file might not have been created (particularly in the
+          # case of an incremental bot).
+        end
       end
     end
     FileUtils.chmod(0755, zipfile_path)
