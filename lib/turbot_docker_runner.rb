@@ -65,7 +65,6 @@ class TurbotDockerRunner
     set_up_directory(output_path)
     set_up_directory(downloads_path)
     synchronise_repo
-    clear_saved_vars if @run_type == 'new_snapshot'
 
     @stdout_file = File.open(stdout_path, 'wb')
     @stdout_file.sync = true
@@ -114,10 +113,6 @@ class TurbotDockerRunner
       # This could be removed if OpencBot is made smarter.
       File.symlink(data_path, File.join(repo_path, 'db'))
     end
-  end
-
-  def clear_saved_vars
-    FileUtils.rm_f(File.join(data_path, '_vars.yml'))
   end
 
   def run_in_container
