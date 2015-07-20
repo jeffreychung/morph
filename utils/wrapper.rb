@@ -40,7 +40,8 @@ runner = TurbotRunner::Runner.new(
   '/repo',
   :log_to_file => true,
   :record_handler => Handler.new,
-  :output_directory => '/output'
+  :output_directory => '/output',
+  :scraper_provided => (ENV['RUN_TYPE'] == 'scraper_provided'),
 )
 
 rc = runner.run
