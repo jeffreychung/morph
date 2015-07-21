@@ -6,6 +6,13 @@ STDERR.sync = true
 
 MAX_DRAFT_ROWS = 2000
 
+begin
+  BOT_ID = JSON.parse("/repo/manifest.json")["bot_id"]
+rescue
+  STDOUT.puts "Could not load BOT_ID"
+  BOT_ID = nil
+end
+
 class Handler < TurbotRunner::BaseHandler
   def initialize
     super
@@ -18,7 +25,12 @@ class Handler < TurbotRunner::BaseHandler
     else
       @counts[data_type] += 1
     end
-    STDOUT.puts "#{Time.now} :: Handled #{@counts[data_type]} records" if @counts[data_type] % 1000 == 0
+
+    if BOT_ID == "dk_xbrl_parser"
+      STDOUT.puts "#{Time.now} :: Handled #{@counts[data_type]} records of type #{data_type}"
+    else
+      STDOUT.puts "#{Time.now} :: Handled #{@counts[data_type]} records" if @counts[data_type] % 1000 == 0
+    end
   end
 
   def handle_invalid_record(record, data_type, error_message)
@@ -44,5 +56,8 @@ runner = TurbotRunner::Runner.new(
   :scraper_provided => (ENV['RUN_TYPE'] == 'scraper_provided'),
 )
 
+STDOUT.puts "Runner about to start"
 rc = runner.run
+STDOUT.puts "Runner completed with exit code #{rc}"
+
 exit(rc)
