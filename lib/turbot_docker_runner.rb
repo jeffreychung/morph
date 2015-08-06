@@ -99,6 +99,7 @@ class TurbotDockerRunner
       rescue Git::GitExecuteError
         Rails.logger.info('Hit GitExecuteError')
         retry unless (tries -= 1).zero?
+        raise
       end
     else
       begin
@@ -107,6 +108,7 @@ class TurbotDockerRunner
       rescue Git::GitExecuteError
         Rails.logger.info('Hit GitExecuteError')
         retry unless (tries -= 1).zero?
+        raise
       end
 
       # Bots using OpencBot's incrementors expect to be able to write to /repo/db.
