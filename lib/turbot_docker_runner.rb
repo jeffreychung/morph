@@ -393,7 +393,7 @@ class TurbotDockerRunner
 
   def sources_path
     if Rails.env.production?
-      base = '/oc/sources/bots'
+      base = '/oc/openc/sources/bots'
     else
       base = 'sources'
     end
