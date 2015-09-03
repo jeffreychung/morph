@@ -25,7 +25,7 @@ class TurbotDockerRunner
     @run_uid = params[:run_uid]
     @run_type = params[:run_type]
     @user_api_key = params[:user_api_key]
-
+    @user_roles = params[:user_roles] || []
     @run_ended = false
   end
 
@@ -128,7 +128,7 @@ class TurbotDockerRunner
         "#{local_root_path}/utils:/utils:ro",
         "#{output_path}:/output"
       ]
-
+      binds << "#{output_path}:/sources" if @user_roles.include?("admin")
       Rails.logger.info("Starting container with bindings: #{binds}")
       container.start('Binds' => binds)
 
@@ -173,7 +173,7 @@ class TurbotDockerRunner
       'Memory' => 1.gigabyte,
       # MORPH_URL is used by Turbotlib to determine whether a scraper is
       # running in production.
-      'Env' => ["RUN_TYPE=#{@run_type}", "MORPH_URL=#{ENV['MORPH_URL']}"],
+      'Env' => ["RUN_TYPE=#{@run_type}", "MORPH_URL=#{ENV['MORPH_URL']}", "USER_ROLES=#{@user_roles.join(',')}"],
     }
     Rails.logger.info("Creating container with params #{container_params}")
     Docker::Container.create(container_params, conn)
