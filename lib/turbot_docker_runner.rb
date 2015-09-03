@@ -128,7 +128,7 @@ class TurbotDockerRunner
         "#{local_root_path}/utils:/utils:ro",
         "#{output_path}:/output"
       ]
-      binds << "#{output_path}:/sources" if @user_roles.include?("admin")
+      binds << "#{sources_path}:/sources" if @user_roles.include?("admin")
       Rails.logger.info("Starting container with bindings: #{binds}")
       container.start('Binds' => binds)
 
@@ -388,6 +388,18 @@ class TurbotDockerRunner
       @bot_name[0],
       @bot_name,
       @run_uid.to_s
+    )
+  end
+
+  def sources_path
+    if Rails.env.production?
+      base = '/oc/sources/bots'
+    else
+      base = 'sources'
+    end
+    File.join(
+      base,
+      @bot_name
     )
   end
 
