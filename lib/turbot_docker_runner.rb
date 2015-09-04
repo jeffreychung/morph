@@ -128,7 +128,10 @@ class TurbotDockerRunner
         "#{local_root_path}/utils:/utils:ro",
         "#{output_path}:/output"
       ]
-      binds << "#{sources_path}:/sources" if @user_roles.include?("admin")
+      if @user_roles.include?("admin")
+        binds << "#{sources_path}:/sources"
+        set_up_directory(sources_path)
+      end
       Rails.logger.info("Starting container with bindings: #{binds}")
       container.start('Binds' => binds)
 
@@ -158,6 +161,10 @@ class TurbotDockerRunner
 
     Rails.logger.info("Returning with status_code #{status_code}")
     status_code
+  end
+
+  def create_sources_path
+
   end
 
   def create_container
