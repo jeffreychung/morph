@@ -118,8 +118,6 @@ class TurbotDockerRunner
   end
 
   def run_in_container
-    container = create_container
-    status_code = nil
     begin
       binds = [
         "#{repo_path}:/repo:ro",
@@ -130,8 +128,11 @@ class TurbotDockerRunner
       ]
       if @user_roles.include?("admin")
         binds << "#{sources_path}:/sources"
-        #set_up_directory(sources_path)
+        set_up_directory(sources_path)
       end
+
+      container = create_container
+      status_code = nil
       Rails.logger.info("Starting container with bindings: #{binds}")
       container.start('Binds' => binds)
 
