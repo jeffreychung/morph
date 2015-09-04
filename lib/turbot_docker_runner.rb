@@ -151,7 +151,7 @@ class TurbotDockerRunner
       rescue Excon::Errors::SocketError => e
         Rails.logger.info("Could not kill container")
       end
-      status_code = 3 # Error in system
+      status_code = -1 # Errored
     ensure
       Rails.logger.info('Waiting for container to finish')
       response = container.wait
