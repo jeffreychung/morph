@@ -119,7 +119,7 @@ class TurbotDockerRunner
 
   def run_in_container
     container = create_container
-
+    status_code = nil
     begin
       binds = [
         "#{repo_path}:/repo:ro",
@@ -155,7 +155,7 @@ class TurbotDockerRunner
     ensure
       Rails.logger.info('Waiting for container to finish')
       response = container.wait
-      status_code = response['StatusCode']
+      status_code = response['StatusCode'] if status_code.nil?
       Rails.logger.info('Deleting container')
       container.delete
     end
