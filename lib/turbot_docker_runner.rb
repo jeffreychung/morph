@@ -440,7 +440,11 @@ class TurbotDockerRunner
 
   def log_exception_and_notify_airbrake(e)
     Rails.logger.error("Hit error when running container: #{e}")
-    e.backtrace.each { |line| Rails.logger.error(line) }
+    @stderr_file.puts("Hit error when running container: #{e}")
+    e.backtrace.each do |line|
+      Rails.logger.error(line)
+      @stderr_file.puts(line)
+    end
     Airbrake.notify(e, :parameters => @params)
   end
 end
