@@ -59,17 +59,20 @@ class TurbotDockerRunner
   end
 
   def set_up
-    connect_to_rabbitmq
-    set_up_directory(tmp_path)
-    set_up_directory(data_path)
     set_up_directory(output_path)
-    set_up_directory(downloads_path)
-    synchronise_repo
 
+    # We open these files as soon as possible so that we can log to them if
+    # there's any error.
     @stdout_file = File.open(stdout_path, 'wb')
     @stdout_file.sync = true
     @stderr_file = File.open(stderr_path, 'wb')
     @stderr_file.sync = true
+
+    connect_to_rabbitmq
+    set_up_directory(tmp_path)
+    set_up_directory(data_path)
+    set_up_directory(downloads_path)
+    synchronise_repo
   end
 
   def clean_up
@@ -146,13 +149,12 @@ class TurbotDockerRunner
       end
 
     rescue Exception => e
-      log_exception_and_notify_airbrake(e)
       begin
         container.kill
       rescue Excon::Errors::SocketError => e
         Rails.logger.info("Could not kill container")
       end
-      status_code = -1 # Errored
+      raise
     ensure
       Rails.logger.info('Waiting for container to finish')
       response = container.wait
@@ -440,10 +442,12 @@ class TurbotDockerRunner
 
   def log_exception_and_notify_airbrake(e)
     Rails.logger.error("Hit error when running container: #{e}")
-    @stderr_file.puts("Hit error when running container: #{e}")
-    e.backtrace.each do |line|
-      Rails.logger.error(line)
-      @stderr_file.puts(line)
+    unless @stderr_file.nil?
+      @stderr_file.puts("Hit error when running container: #{e}")
+      e.backtrace.each do |line|
+        Rails.logger.error(line)
+        @stderr_file.puts(line)
+      end
     end
     Airbrake.notify(e, :parameters => @params)
   end
