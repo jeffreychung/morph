@@ -171,7 +171,6 @@ class TurbotDockerRunner
     container_params = {
       'name' => "#{@bot_name}_#{@run_uid}",
       'Cmd' => ['/bin/bash', '-l', '-c', command],
-      'User' => 'scraper',
       'Image' => image,
       # We have 8GB to divide between 10 processes, but there's scope for
       # swapping and most processes won't need that much memory.
