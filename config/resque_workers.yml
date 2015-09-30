@@ -18,3 +18,13 @@ worker_9:
   queues: 'turbot_docker_runs'
 worker_10:
   queues: 'turbot_docker_runs'
+worker_11:
+  queues: 'turbot_docker_runs'
+worker_12:
+  queues: 'turbot_docker_runs'
+worker_13:
+  queues: 'turbot_docker_runs'
+worker_14:
+  queues: 'turbot_docker_runs'
+worker_15:
+  queues: 'turbot_docker_runs'
