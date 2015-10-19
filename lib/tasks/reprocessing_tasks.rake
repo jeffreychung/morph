@@ -1,6 +1,8 @@
 namespace :reprocess do
   desc "Reprocess runs"
   task :runs => :environment do
+    Hutch.connect({}, HutchConfig)
+
     bot_id = ENV.fetch("bot_id")
     snapshot_id = ENV.fetch("snapshot_id")
     run_uids = ENV.fetch("run_uids").split(",").map(&:to_i)
