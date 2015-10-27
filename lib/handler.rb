@@ -54,7 +54,8 @@ class Handler < TurbotRunner::BaseHandler
     end
   end
 
-  def handle_run_ended
+  def handle_snapshot_ended(data_type)
+    return if data_type == "primary data"
     message = {
       :type => 'run.ended',
       :snapshot_id => @run_id,
