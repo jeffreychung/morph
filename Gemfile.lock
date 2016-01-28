@@ -433,7 +433,7 @@ GEM
     turbot-api (0.0.14)
       rest-client (~> 1.6.1)
       rubyzip
-    turbot-runner-morph (0.0.10)
+    turbot-runner-morph (0.0.11)
       openc-json_schema (= 0.0.13)
     tzinfo (0.3.38)
     uglifier (2.4.0)
