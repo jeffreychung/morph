@@ -37,8 +37,12 @@ class TurbotDockerRunner
       status_code = run_in_container
     end
 
-    # TODO remove this restriction once SEC data is migrated.
-    process_output unless @bot_name == 'sec_subsidiaries'
+    # TODO remove SEC restriction once SEC data is migrated
+    # TODO remove open_gazettes restruction once we've resolved
+    # https://app.asana.com/0/10487231230096/85671840139915
+    unless ['sec_subsidiaries', 'open_gazettes_fr_bodacc'].include?(@bot_name)
+      process_output
+    end
 
     zip_and_symlink_output
 
